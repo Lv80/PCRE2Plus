@@ -1,0 +1,271 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		782849DE1C89C2960050F18B /* example.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 782849DD1C89C2960050F18B /* example.cpp */; };
+		78A627D11C80B76900FDFF50 /* PCRE2Plus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78A627D01C80B76900FDFF50 /* PCRE2Plus.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		786A82E41C80B62300458646 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		782849DD1C89C2960050F18B /* example.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = example.cpp; path = PCRE2Plus/example.cpp; sourceTree = SOURCE_ROOT; };
+		786A82E61C80B62300458646 /* PCRE2PlusOSX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PCRE2PlusOSX; sourceTree = BUILT_PRODUCTS_DIR; };
+		78A627D01C80B76900FDFF50 /* PCRE2Plus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCRE2Plus.cpp; path = PCRE2Plus/PCRE2Plus.cpp; sourceTree = SOURCE_ROOT; };
+		78A627D21C80B9D700FDFF50 /* PCRE2Plus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRE2Plus.h; path = PCRE2Plus/PCRE2Plus.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		786A82E31C80B62300458646 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		786A82DD1C80B62300458646 = {
+			isa = PBXGroup;
+			children = (
+				786A82E81C80B62300458646 /* PCRE2Plus */,
+				786A82E71C80B62300458646 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		786A82E71C80B62300458646 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				786A82E61C80B62300458646 /* PCRE2PlusOSX */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		786A82E81C80B62300458646 /* PCRE2Plus */ = {
+			isa = PBXGroup;
+			children = (
+				782849DD1C89C2960050F18B /* example.cpp */,
+				78A627D21C80B9D700FDFF50 /* PCRE2Plus.h */,
+				78A627D01C80B76900FDFF50 /* PCRE2Plus.cpp */,
+			);
+			name = PCRE2Plus;
+			path = PCRE2PlusOSX;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		786A82E51C80B62300458646 /* PCRE2PlusOSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 786A82ED1C80B62300458646 /* Build configuration list for PBXNativeTarget "PCRE2PlusOSX" */;
+			buildPhases = (
+				786A82E21C80B62300458646 /* Sources */,
+				786A82E31C80B62300458646 /* Frameworks */,
+				786A82E41C80B62300458646 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PCRE2PlusOSX;
+			productName = PCRE2PlusOSX;
+			productReference = 786A82E61C80B62300458646 /* PCRE2PlusOSX */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		786A82DE1C80B62300458646 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = dolphin;
+				TargetAttributes = {
+					786A82E51C80B62300458646 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+				};
+			};
+			buildConfigurationList = 786A82E11C80B62300458646 /* Build configuration list for PBXProject "PCRE2PlusOSX" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 786A82DD1C80B62300458646;
+			productRefGroup = 786A82E71C80B62300458646 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				786A82E51C80B62300458646 /* PCRE2PlusOSX */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		786A82E21C80B62300458646 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				782849DE1C89C2960050F18B /* example.cpp in Sources */,
+				78A627D11C80B76900FDFF50 /* PCRE2Plus.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		786A82EB1C80B62300458646 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		786A82EC1C80B62300458646 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		786A82EE1C80B62300458646 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_UNICODE=1",
+					"DEBUG=1",
+				);
+				HEADER_SEARCH_PATHS = "~/.local/include";
+				LIBRARY_SEARCH_PATHS = "~/.local/lib";
+				OTHER_LDFLAGS = (
+					"-lpcre2-16",
+					"-lpcre2-8",
+					"-lpcre2-32",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		786A82EF1C80B62300458646 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = "_UNICODE=1";
+				HEADER_SEARCH_PATHS = "~/.local/include";
+				LIBRARY_SEARCH_PATHS = "~/.local/lib";
+				OTHER_LDFLAGS = (
+					"-lpcre2-16",
+					"-lpcre2-8",
+					"-lpcre2-32",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		786A82E11C80B62300458646 /* Build configuration list for PBXProject "PCRE2PlusOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				786A82EB1C80B62300458646 /* Debug */,
+				786A82EC1C80B62300458646 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		786A82ED1C80B62300458646 /* Build configuration list for PBXNativeTarget "PCRE2PlusOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				786A82EE1C80B62300458646 /* Debug */,
+				786A82EF1C80B62300458646 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 786A82DE1C80B62300458646 /* Project object */;
+}
