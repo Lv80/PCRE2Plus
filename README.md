@@ -38,7 +38,7 @@ Download build bat file from this repo:
 	4. Execute build bat
 	5. If everything OK, you'll get three lib files: libpcre2-8.lib libpcre2-16.lib libpcre2-32.lib
 
-###Install on *Nix (VC++)
+###Install on *nix
 
 	1. Extract pcre2-10.21.zip
 	2. Go to pcre2 source directory
@@ -70,6 +70,8 @@ Add [PCRE2Plus.cpp](PCRE2Plus/PCRE2Plus.cpp) to Project
 
 ```c++
 
+    #include "PCRE2Plus.h"
+    using namespace PCRE2Plus;
     std::string c = R"(\w+)";
     auto Regex = re::compile(c);
     if (Regex){
