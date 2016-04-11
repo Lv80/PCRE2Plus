@@ -38,7 +38,7 @@ Download build bat file from this repo:
 	4. Execute build bat
 	5. If everything OK, you'll get three lib files: libpcre2-8.lib libpcre2-16.lib libpcre2-32.lib
 
-###Install on *nix
+###Install on *Nix (VC++)
 
 	1. Extract pcre2-10.21.zip
 	2. Go to pcre2 source directory
@@ -55,7 +55,8 @@ Put PCRE2 lib files to project linker parameter (all 8, 16 and 32 bit)
 
 ### Add PCRE2 to VC++
 ![vcdir](Img/vcdir.png)
-![vcinput](Img/vcinput.png)
+
+With macro supported, it's possible for VSC++ to choose correct lib. (Do not specify lib name in "link/input" dialog.
 
 ### Add PCRE2 to Xcode
 Presume the pcre2 is installed to ~/.local
@@ -136,7 +137,7 @@ Reference of Unicode Category:
 
 [http://www.regular-expressions.info/unicode.html](http://www.regular-expressions.info/unicode.html)
 
-##Exceptional Handling
+##Exception Handling
 
 There is no exception handling
 
@@ -207,6 +208,8 @@ For details see [State of compliance for python re document](SOC.md) document
 The current phase of this project is to support basic function and handle unicode texts properly
 
 some functions related to the position are not fully tested(although a few other functions are depend on them and works)
+
+Function call in re.sub is not supported
 
 ##Developer
 API: [http://www.pcre.org/current/doc/html/pcre2api.html](http://www.pcre.org/current/doc/html/pcre2api.html)
