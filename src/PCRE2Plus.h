@@ -76,8 +76,20 @@ namespace PCRE2Plus{
     //==========================================================================
     class re{
     protected:
+        inline static pcre2_compile_context_8 * CreateCContext_8(){
+            pcre2_compile_context_8 * t = pcre2_compile_context_create_8(NULL);
+            pcre2_set_newline_8(t, PCRE2_NEWLINE_ANY);
+            return t;
+        }
+        inline static pcre2_compile_context * CreateCContext(){
+            pcre2_compile_context * t = pcre2_compile_context_create(NULL);
+            pcre2_set_newline(t, PCRE2_NEWLINE_ANY);
+            return t;
+        }
         static int lasterror;
         static size_t erroroffset;
+        static pcre2_compile_context_8 * ccontext_8;
+        static pcre2_compile_context * ccontext;
     public:
         class RegexObject;
         class MatchObject;
@@ -119,25 +131,7 @@ namespace PCRE2Plus{
     public:
         static const size_t DOTALL = PCRE2_DOTALL;
 /*
-Newline conventions
-
-PCRE2 supports five different conventions for indicating line breaks in strings: a single CR (carriage return) character, a single LF (linefeed) character, the two-character sequence CRLF, any of the three preceding, or any Unicode newline sequence. The pcre2api page has further discussion about newlines, and shows how to set the newline convention when calling pcre2_compile().
-
-It is also possible to specify a newline convention by starting a pattern string with one of the following five sequences:
-
-  (*CR)        carriage return
-  (*LF)        linefeed
-  (*CRLF)      carriage return, followed by linefeed
-  (*ANYCRLF)   any of the three above
-  (*ANY)       all Unicode newline sequences
-
-These override the default and the options given to the compiling function. For example, on a Unix system where LF is the default newline sequence, the pattern
-
-  (*CR)a.b
-
-changes the convention to CR. That pattern matches "a\nb" because LF is no longer a newline. If more than one of these settings is present, the last one is used.
-
-The newline convention affects where the circumflex and dollar assertions are true. It also affects the interpretation of the dot metacharacter when PCRE2_DOTALL is not set, and the behaviour of \N. However, it does not affect what the \R escape sequence matches. By default, this is any Unicode newline sequence, for Perl compatibility. However, this can be changed; see the description of \R in the section entitled "Newline sequences" below. A change of \R setting can be combined with a change of newline convention. 
+we force using PCRE2_NEWLINE_ANY to match any chars, no matter how complier parameter is given.
 */
         static const size_t S = DOTALL;
         static const size_t MULTLINE = PCRE2_MULTILINE;

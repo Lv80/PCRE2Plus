@@ -37,6 +37,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using namespace PCRE2Plus;
 int re::lasterror = 0;
 size_t re::erroroffset = 0;
+pcre2_compile_context_8 * re::ccontext_8 = re::CreateCContext_8();
+pcre2_compile_context * re::ccontext = re::CreateCContext();
+
 //------------------------------------------------------------------------------
 std::string re::getlasterrorstr(){
     char c[500];
@@ -127,21 +130,23 @@ std::wstring re::escape(const std::wstring & unquoted){
 std::shared_ptr<re::RegexObject> re::compile(const std::string & pattern, int flags){
     flags = flags | PCRE2_DUPNAMES;
     pcre2_code_8 * re_code = NULL;
-    pcre2_compile_context_8 * ccontext = NULL;
-
+    pcre2_compile_context_8 * ccontext_8 = re::ccontext_8;
     if (flags & re::LOCALE){
         auto tables = pcre2_maketables_8(NULL);
-        ccontext = pcre2_compile_context_create_8(NULL);
-        pcre2_set_character_tables_8(ccontext, tables);
+        ccontext_8 = pcre2_compile_context_copy_8(re::ccontext_8);
+        pcre2_set_character_tables_8(ccontext_8, tables);
+        flags &= ~re::LOCALE;
     }
-    flags &= !re::LOCALE;
     re_code = pcre2_compile_8(
         (PCRE2_SPTR8)pattern.c_str(),
         PCRE2_ZERO_TERMINATED,
         flags,
         &re::lasterror,
         &re::erroroffset,  //TODO: ERROR Position
-        ccontext);
+        ccontext_8);
+    if (ccontext_8 != re::ccontext_8){
+        pcre2_compile_context_free_8(ccontext_8);
+    }
     if (re_code == NULL || re::lasterror != 100){
         return nullptr;
     }
@@ -152,14 +157,13 @@ std::shared_ptr<re::RegexObject> re::compile(const std::string & pattern, int fl
 std::shared_ptr<re::RegexObjectW> re::compile(const std::wstring & pattern, int flags){
     flags |= (PCRE2_UTF | PCRE2_DUPNAMES | PCRE2_UCP);
     pcre2_code * re_code = NULL;
-    pcre2_compile_context * ccontext = NULL;
-
+    pcre2_compile_context * ccontext = re::ccontext;
     if (flags & re::LOCALE){
         auto tables = pcre2_maketables(NULL);
-        ccontext = pcre2_compile_context_create(NULL);
+        ccontext = pcre2_compile_context_copy(re::ccontext);
         pcre2_set_character_tables(ccontext, tables);
+        flags &= ~re::LOCALE;
     }
-    flags &= !re::LOCALE;
     re_code = pcre2_compile(
         (PCRE2_SPTR)pattern.c_str(),
         PCRE2_ZERO_TERMINATED,
@@ -167,6 +171,9 @@ std::shared_ptr<re::RegexObjectW> re::compile(const std::wstring & pattern, int 
         &re::lasterror,
         &re::erroroffset,
         ccontext);
+    if (ccontext != re::ccontext){
+        pcre2_compile_context_free(ccontext);
+    }
     if (re_code == NULL || re::lasterror != 100){
         return nullptr;
     }
@@ -851,7 +858,7 @@ void re::RegexObject::search(std::unique_ptr<re::MatchObject> & M, const std::st
         M->m_pos = pos;
         M->m_endpos = strlength;
         M->m_groups.clear();
-        for (size_t i = 0; i < lastindex * 2; i++){
+        for (size_t i = 0; (int)i < lastindex * 2; i++){
             M->m_groups.push_back(ovector[i]);
         }
         return;
@@ -891,7 +898,7 @@ void re::RegexObjectW::search(std::unique_ptr<re::MatchObjectW> & M, const std::
         M->m_pos = pos;
         M->m_endpos = strlength;
         M->m_groups.clear();
-        for (size_t i = 0; i < lastindex * 2; i++){
+        for (size_t i = 0; (int)i < lastindex * 2; i++){
             M->m_groups.push_back(ovector[i]);
         }
         return;

@@ -127,10 +127,9 @@ int main(int argc, char* argv[]) {
 
     auto tmp = R"((\w+ )+)";
     std::string STR = R"(abc def ghi )";
-    auto M = re::search(tmp , STR);
-	if (M){
-        PRINTLN(M->group());
-        auto v = M->groups();
+    if (auto m = re::search(tmp, STR)){
+        PRINTLN(m->group());
+        auto v = m->groups();
         PRINTLN(std::to_string(v.size()));
         for (auto i = v.begin(); i < v.end(); i++){
             PRINTLN(*i);
@@ -195,8 +194,7 @@ int main(int argc, char* argv[]) {
     {
         //We don't support match, use search instead
         std::string STR = "Isaac Newton, physicist";
-        auto m = re::search(R"(^(\w+) (\w+))", STR);
-        if (m){
+        if (auto m = re::search(R"(^(\w+) (\w+))", STR)){
             PRINTLN(m->group(0));  //Isaac Newton
             PRINTLN(m->group(1));  //Isaac
             PRINTLN(m->group(2));  //Newton
@@ -207,8 +205,7 @@ int main(int argc, char* argv[]) {
     {
         //We don't support match, use search instead
         std::string STR = "Malcolm Reynolds";
-        auto m = re::search(R"(^(?P<first_name>\w+) (?P<last_name>\w+))", STR);
-        if (m){
+        if (auto m = re::search(R"(^(?P<first_name>\w+) (?P<last_name>\w+))", STR)){
             PRINTLN(m->group("first_name"));  //Malcolm
             PRINTLN(m->group("last_name"));   //Reynolds
             PRINTLN(m->group(1));  //Malcolm
@@ -220,8 +217,7 @@ int main(int argc, char* argv[]) {
     {
         //We don't support match, use search instead
         std::string STR = "a1b2c3";
-        auto m = re::search(R"XX(^(..)+)XX", STR);
-        if (m){
+        if (auto m = re::search(R"XX(^(..)+)XX", STR)){
             PRINTLN(m->group(1));  //c3
         }
     }
@@ -230,8 +226,7 @@ int main(int argc, char* argv[]) {
     {
         //We don't support match, use search instead
         std::string STR = "24.1632";
-        auto m = re::search(R"(^(\d+)\.(\d+))", STR);
-        if (m){
+        if (auto m = re::search(R"(^(\d+)\.(\d+))", STR)){
             auto v = m->groups();
             for (auto i = v.begin(); i < v.end(); i++){
                 PRINTLN(*i);
@@ -243,8 +238,7 @@ int main(int argc, char* argv[]) {
     {
         //We don't support match, use search instead
         std::string STR = "24";
-        auto m = re::search(R"(^(\d+)\.?(\d+)?)", STR);
-        if (m){
+        if (auto m = re::search(R"(^(\d+)\.?(\d+)?)", STR)){
             auto v = m->groups();
             for (auto i = v.begin(); i < v.end(); i++){
                 PRINTLN(*i);
@@ -272,16 +266,22 @@ int main(int argc, char* argv[]) {
         PRINTLN(re::getlasterrorstr());
     }
 
+    print_header("Test DOTALL");
+    {
+        std::string STR = "ABC\r\nDEF\rHIJ\nGGG";
+        if (auto m = re::search(R"(.+)", STR, re::DOTALL)){
+            PRINTLN(m->group());
+        }
+    }
+
     print_header("Test Unicode");
     {
         std::wstring STR = L"äbc";
-        auto X = re::search(LR"(\p{L}+)", STR);
-        if (X){
-            PRINTLN(X->group());
+        if (auto m = re::search(LR"(\p{L}+)", STR)){
+            PRINTLN(m->group());
         }
         PRINTLN(std::to_string(re::getlasterror()));
         PRINTLN(re::getlasterrorstr());
-
     }
 
     print_header("Test Locale");
