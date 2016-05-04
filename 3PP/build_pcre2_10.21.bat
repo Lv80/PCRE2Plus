@@ -11,7 +11,7 @@ set widths=8 16 32
 for %%w in (%widths%) do (
 
     for %%a in (%filelist%) do (
-       cl /GS /MD /EHsc /O1 -DPCRE2_CODE_UNIT_WIDTH=%%w -DSUPPORT_UNICODE=1 -DHAVE_CONFIG_H -c %%a
+       cl /GS /MD /EHsc /O1  -DHEAP_MATCH_RECURSE=1 -DPCRE2_CODE_UNIT_WIDTH=%%w -DSUPPORT_UNICODE=1 -DHAVE_CONFIG_H -DNEWLINE_DEFAULT=3 -c %%a
        if %errorlevel% neq 0 exit /b %errorlevel%
     )
     
@@ -26,7 +26,7 @@ set widths=8 16 32
 for %%w in (%widths%) do (
 
     for %%a in (%filelist%) do (
-       cl /GS /MDd /EHsc /O1 -DPCRE2_CODE_UNIT_WIDTH=%%w -DSUPPORT_UNICODE=1 -DHAVE_CONFIG_H -c %%a
+       cl /GS /MDd /EHsc /O1 -DHEAP_MATCH_RECURSE=1 -DPCRE2_CODE_UNIT_WIDTH=%%w -DSUPPORT_UNICODE=1 -DHAVE_CONFIG_H -DNEWLINE_DEFAULT=3 -c %%a
        if %errorlevel% neq 0 exit /b %errorlevel%
     )
     

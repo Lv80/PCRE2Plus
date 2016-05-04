@@ -26,19 +26,8 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 #include "PCRE2Plus.h"
-#if defined(_MSC_VER)
-#if defined (_DEBUG)
-#pragma comment( lib, "libpcre2-8d")
-#pragma comment( lib, "libpcre2-16d")
-#pragma comment( lib, "libpcre2-32d")
-#else
-#pragma comment( lib, "libpcre2-8")
-#pragma comment( lib, "libpcre2-16")
-#pragma comment( lib, "libpcre2-32")
-#endif
-#endif
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -290,7 +279,7 @@ std::unique_ptr<re::iterW> re::finditer(const std::wstring & pattern, const std:
 }
 //==============================================================================
 //------------------------------------------------------------------------------
-re::MatchObject::MatchObject(std::shared_ptr<RegexObject> re, std::string Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos):
+re::MatchObject::MatchObject(std::shared_ptr<RegexObject> re, const std::string & Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos):
 m_re(re),
 m_str(Str), 
 m_pos(pos),
@@ -302,7 +291,7 @@ m_lastindex(lastindex)
     }
 }
 //------------------------------------------------------------------------------
-re::MatchObjectW::MatchObjectW(std::shared_ptr<RegexObjectW> re, std::wstring Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos):
+re::MatchObjectW::MatchObjectW(std::shared_ptr<RegexObjectW> re, const std::wstring & Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos):
 m_re(re),
 m_str(Str),
 m_pos(pos),
@@ -449,23 +438,28 @@ std::shared_ptr<re::RegexObjectW> re::MatchObjectW::re(){
 re::RegexObject::RegexObject(pcre2_code_8 * re, size_t flags, std::string pattern):
 m_flags(flags),
 m_pattern(pattern),
-m_re(re)
+m_re(re),
+m_match_data(nullptr)
 {
+
 }
 //------------------------------------------------------------------------------
 re::RegexObjectW::RegexObjectW(pcre2_code * re, size_t flags, std::wstring pattern) :
 m_flags(flags),
 m_pattern(pattern),
-m_re(re)
+m_re(re),
+m_match_data(nullptr)
 {
 }
 //------------------------------------------------------------------------------
 re::RegexObject::~RegexObject(){
+    pcre2_match_data_free_8(m_match_data);
     pcre2_code_free_8((pcre2_code_8 *)this->m_re);
     m_re = nullptr;
 }
 //------------------------------------------------------------------------------
 re::RegexObjectW::~RegexObjectW(){
+    pcre2_match_data_free(m_match_data);
     pcre2_code_free((pcre2_code *)this->m_re);
     m_re = nullptr;
 }
@@ -487,22 +481,12 @@ std::wstring re::RegexObjectW::pattern(){
 }
 //------------------------------------------------------------------------------
 std::unique_ptr<re::iter> re::RegexObject::finditer(const std::string & Str, size_t pos, int endpos){
-     std::string Str1 = Str;
-    if (endpos > -1){
-        Str1 = Str.substr(0, endpos);
-    }
-    endpos = (int)Str1.length();
-    std::unique_ptr<re::iter> p_it(new re::iter(shared_from_this(), Str1));
+    std::unique_ptr<re::iter> p_it(new re::iter(shared_from_this(), Str, endpos));
     return p_it;
 }
 //------------------------------------------------------------------------------
 std::unique_ptr<re::iterW> re::RegexObjectW::finditer(const std::wstring & Str, size_t pos, int endpos){
-    std::wstring Str1 = Str;
-    if (endpos > -1){
-        Str1 = Str.substr(0, endpos);
-    }
-    endpos = (int)Str1.length();
-    std::unique_ptr<re::iterW> p_it(new re::iterW(shared_from_this(), Str1));
+    std::unique_ptr<re::iterW> p_it(new re::iterW(shared_from_this(), Str, endpos));
     return p_it;
 }
 //------------------------------------------------------------------------------
@@ -567,23 +551,30 @@ std::vector<std::string> re::RegexObject::findall(const std::string & Str, size_
     if (this->m_pattern == ""){
         return v;
     }
-    pcre2_match_data_8 * match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
-    std::string Str1 = Str;
-    if (endpos > -1){
-        Str1 = Str.substr(0, endpos);
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
     }
-    endpos = (int)Str1.length();
-    while (1 && this->m_pattern != ""){
+    size_t strlength = 0;
+    if (endpos > -1){
+        strlength = endpos;
+    }
+    else{
+        strlength = Str.length();
+    }
+    if (this->m_pattern == ""){
+        return v;
+    }
+    while (1){
         int lastindex = pcre2_match_8(
             m_re,
-            (PCRE2_SPTR8)Str1.c_str(),
-            Str1.size(), // * sizeof(char),   //TODO: Correct Size
+            (PCRE2_SPTR8)Str.c_str(),
+            strlength,
             pos,
             0,
-            match_data,
+            m_match_data,
             NULL);
         if (lastindex > 0){
-            PCRE2_SIZE * ovector = pcre2_get_ovector_pointer_8(match_data);
+            PCRE2_SIZE * ovector = pcre2_get_ovector_pointer_8(m_match_data);
             v.push_back(Str.substr(ovector[0], ovector[1] - ovector[0]));
             pos = ovector[1];
         }
@@ -591,7 +582,6 @@ std::vector<std::string> re::RegexObject::findall(const std::string & Str, size_
             break;
         }
     }
-    pcre2_match_data_free_8(match_data);
     return v;
 }
 //------------------------------------------------------------------------------
@@ -600,23 +590,30 @@ std::vector<std::wstring> re::RegexObjectW::findall(const std::wstring & Str, si
     if (this->m_pattern == L""){
         return v;
     }
-    pcre2_match_data * match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
-     std::wstring Str1 = Str;
-    if (endpos > -1){
-        Str1 = Str.substr(0, endpos);
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
     }
-    endpos = (int)Str1.length();
-    while (1 && this->m_pattern != L""){
+    size_t strlength = 0;
+    if (endpos > -1){
+        strlength = endpos;
+    }
+    else{
+        strlength = Str.length();
+    }
+    if (this->m_pattern == L""){
+        return v;
+    }
+    while (1){
         int lastindex = pcre2_match(
             m_re,
-            (PCRE2_SPTR)Str1.c_str(),
-            Str1.size(),
+            (PCRE2_SPTR)Str.c_str(),
+            strlength,
             pos,
             0,
-            match_data,
+            m_match_data,
             NULL);
         if (lastindex > 0){
-            PCRE2_SIZE * ovector = pcre2_get_ovector_pointer(match_data);
+            PCRE2_SIZE * ovector = pcre2_get_ovector_pointer(m_match_data);
             v.push_back(Str.substr(ovector[0], ovector[1] - ovector[0]));
             pos = ovector[1];
         }
@@ -624,7 +621,6 @@ std::vector<std::wstring> re::RegexObjectW::findall(const std::wstring & Str, si
             break;
         }
     }
-    pcre2_match_data_free(match_data);
     return v;
 }
 //------------------------------------------------------------------------------
@@ -761,28 +757,30 @@ std::unique_ptr<re::MatchObject> re::RegexObject::search(const std::string & Str
     if (this->m_pattern == ""){
         return nullptr;
     }
-    pcre2_match_data_8 * match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
-    std::string Str1 = Str;
-    if (endpos > -1){
-        Str1 = Str.substr(0, endpos);
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
     }
-    endpos = (int)Str1.length();
+    size_t strlength = 0;
+    if (endpos > -1){
+        strlength = endpos;
+    }
+    else{
+        strlength = Str.length();
+    }
     int lastindex = pcre2_match_8(
         m_re,
-        (PCRE2_SPTR8)Str1.c_str(),
-        Str1.size(),
+        (PCRE2_SPTR8)Str.c_str(),
+        strlength,
         pos,
         0,
-        match_data,
+        m_match_data,
         NULL);
     if (lastindex > 0){
-        PCRE2_SIZE * ovector = pcre2_get_ovector_pointer_8(match_data);
+        PCRE2_SIZE * ovector = pcre2_get_ovector_pointer_8(m_match_data);
         std::unique_ptr<MatchObject> p_sm(new MatchObject(shared_from_this(), Str, ovector, lastindex, pos, endpos));
-        pcre2_match_data_free_8(match_data);
         return p_sm;
     }
     else {
-        pcre2_match_data_free_8(match_data);
         return nullptr;
     }
 }
@@ -794,44 +792,132 @@ std::unique_ptr<re::MatchObjectW> re::RegexObjectW::search(const std::wstring & 
     if (this->m_pattern == L""){
         return nullptr;
     }
-    pcre2_match_data * match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
-    std::wstring Str1 = Str;
-    if (endpos > -1){
-        Str1 = Str.substr(0, endpos);
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
     }
-    endpos = (int)Str1.length();
+    size_t strlength = 0;
+    if (endpos > -1){
+        strlength = endpos;
+    }
+    else{
+        strlength = Str.length();
+    }
     int lastindex = pcre2_match(
         m_re,
-        (PCRE2_SPTR)Str1.c_str(),
-        Str1.size(),
+        (PCRE2_SPTR)Str.c_str(),
+        strlength,
         pos,
         0,
-        match_data,
+        m_match_data,
         NULL);
     if (lastindex > 0){
-        PCRE2_SIZE * ovector = pcre2_get_ovector_pointer(match_data);
+        PCRE2_SIZE * ovector = pcre2_get_ovector_pointer(m_match_data);
         std::unique_ptr<MatchObjectW> p_sm(new MatchObjectW(shared_from_this(), Str, ovector, lastindex, pos, endpos));
-        pcre2_match_data_free(match_data);
         return p_sm;
     }
     else {
-        pcre2_match_data_free(match_data);
         return nullptr;
     }
 }
+//------------------------------------------------------------------------------
+void re::RegexObject::search(std::unique_ptr<re::MatchObject> & M, const std::string & Str, size_t pos, int endpos){
+    if (!m_re){
+        return;
+    }
+    if (this->m_pattern == ""){
+        return;
+    }
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
+    }
+    //pcre2_match_data_8 * match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
+    size_t strlength = 0;
+    if (endpos > -1){
+        strlength = endpos;
+    }
+    else{
+        strlength = Str.length();
+    }
+    int lastindex = pcre2_match_8(
+        m_re,
+        (PCRE2_SPTR8)Str.c_str(),
+        strlength,
+        pos,
+        0,
+        m_match_data,
+        NULL);
+    if (lastindex > 0){
+        PCRE2_SIZE * ovector = pcre2_get_ovector_pointer_8(m_match_data);
+        M->m_pos = pos;
+        M->m_endpos = strlength;
+        M->m_groups.clear();
+        for (size_t i = 0; i < lastindex * 2; i++){
+            M->m_groups.push_back(ovector[i]);
+        }
+        return;
+    }
+    else {
+        M = nullptr;
+    }
+}
+//------------------------------------------------------------------------------
+void re::RegexObjectW::search(std::unique_ptr<re::MatchObjectW> & M, const std::wstring & Str, size_t pos, int endpos){
+    if (!m_re){
+        return;
+    }
+    if (this->m_pattern == L""){
+        return;
+    }
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
+    }
+    size_t strlength = 0;
+    if (endpos > -1){
+        strlength = endpos;
+    }
+    else{
+        strlength = Str.length();
+    }
+    int lastindex = pcre2_match(
+        m_re,
+        (PCRE2_SPTR)Str.c_str(),
+        strlength,
+        pos,
+        0,
+        m_match_data,
+        NULL);
+    if (lastindex > 0){
+        PCRE2_SIZE * ovector = pcre2_get_ovector_pointer(m_match_data);
+        M->m_pos = pos;
+        M->m_endpos = strlength;
+        M->m_groups.clear();
+        for (size_t i = 0; i < lastindex * 2; i++){
+            M->m_groups.push_back(ovector[i]);
+        }
+        return;
+    }
+    else {
+        M = nullptr;
+        return;
+    }
+}
 //==============================================================================
-re::iter::iter(std::shared_ptr<re::RegexObject> regexobj, std::string Str):
+re::iter::iter(std::shared_ptr<re::RegexObject> regexobj, const std::string & Str, int endpos):
 m_regexobj(regexobj),
-m_str(Str){
-    m_matchobj = m_regexobj->search(m_str, 0);
+m_str(Str),
+m_endpos(endpos)
+{
+    m_matchobj = m_regexobj->search(m_str, 0, endpos);
     if (m_matchobj){
         m_pos = (int)m_matchobj->end(0);
     }
 }
 //------------------------------------------------------------------------------
-re::iterW::iterW(std::shared_ptr<re::RegexObjectW> regexobj, std::wstring Str):
+re::iterW::iterW(std::shared_ptr<re::RegexObjectW> regexobj, const std::wstring & Str, int endpos) :
 m_regexobj(regexobj),
-m_str(Str){
+m_str(Str),
+m_endpos(endpos)
+{
     m_matchobj = m_regexobj->search(m_str, 0);
     if (m_matchobj){
         m_pos = (int)m_matchobj->end(0);
@@ -859,8 +945,7 @@ std::unique_ptr<re::MatchObjectW> re::iterW::Get(){
 }
 //------------------------------------------------------------------------------
 re::iter & re::iter::operator ++() {
-    // actual increment takes place here
-     m_matchobj = m_regexobj->search(m_str, m_pos);
+    m_regexobj->search(m_matchobj, m_str, m_pos, m_endpos);
      if (m_matchobj){
          m_pos = (int)m_matchobj->end(0);
     }
@@ -868,8 +953,7 @@ re::iter & re::iter::operator ++() {
 }
 //------------------------------------------------------------------------------
 re::iterW & re::iterW::operator ++() {
-    // actual increment takes place here
-    m_matchobj = m_regexobj->search(m_str, m_pos);
+     m_regexobj->search(m_matchobj, m_str, m_pos, m_endpos);
     if (m_matchobj){
         m_pos = (int)m_matchobj->end(0);
     }

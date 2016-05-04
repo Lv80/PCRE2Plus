@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PCRE2Plus.h">
+    <ClInclude Include="..\src\PCRE2Plus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PCRE2Plus.cpp">
+    <ClCompile Include="example.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="example.cpp">
+    <ClCompile Include="..\src\PCRE2Plus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,17 +1,17 @@
 #NOTE:
 Presume following code applied
 
-	using namespace PCRE2Plus
+    using namespace PCRE2Plus
 
 
 # 7.2. re — Regular expression operations
 *supported by pcre2*
 
 *Note*
-	
-	In C++11 raw string is written in following way:
-	R"()" (c++) = r"" (python)
-	So if you write r"(\w+)" in python, you need to add extra parentheses: R"((\w+))"
+    
+    In C++11 raw string is written in following way:
+    R"()" (c++) = r"" (python)
+    So if you write r"(\w+)" in python, you need to add extra parentheses: R"((\w+))"
 
 
 ##7.2.1. Regular Expression Syntax
@@ -79,10 +79,10 @@ re::DOTALL
 
 *Not sure or not necessary*
 
-	UNICODE can not be used as it's a macro in PCRE 2 defination for other purpose
-	use re::U only
-	
-	it seems only wide string can use this feature properly see UNICODE support section in PCRE2Pluse document
+    UNICODE can not be used as it's a macro in PCRE 2 defination for other purpose
+    use re::U only
+    
+    it seems only wide string can use this feature properly see UNICODE support section in PCRE2Pluse document
 
 ####re.X
 ####re.VERBOSE
@@ -108,8 +108,8 @@ Error Handling: pattern only
 *Not supported*
 
 *Note*
-	
-	Please use re::search instead of re::match
+    
+    Please use re::search instead of re::match
 
 
 ####re.split(pattern, string, maxsplit=0, flags=0)
@@ -146,7 +146,8 @@ Example:
 
 ```C++
 
-	for (auto x = re::finditer(R"(\w+)", "abc def ghi"); !x->AtEnd(); ++*x.get()){
+    std::string STR = "abc def ghi";
+    for (auto x = re::finditer(R"(\w+)", STR); !x->AtEnd(); ++*x.get()){
         std::cout << x->Get()->group(0) << std::endl;
     }
 
@@ -154,14 +155,14 @@ Example:
 ####re.sub(pattern, repl, string, count=0, flags=0)
 
 *Supported*
-	
+    
 static std::string re::sub(const std::string & pattern, const std::string & repl, const std::string & Str, size_t count = 0, int flags = 0)
 
 static std::wstring re::sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count = 0, int flags = 0)
 
 Error Handling: pattern only
 
-	NOTE: \x e.g(\1) as group reference in repl text is not support, use $x e.g $1 instead
+    NOTE: \x e.g(\1) as group reference in repl text is not support, use $x e.g $1 instead
 
 ####re.subn(pattern, repl, string, count=0, flags=0)
 
@@ -337,7 +338,8 @@ Example 1:
 ```C++
 
     //We don't support match, use search instead
-    auto m = re::search(R"(^(\w+) (\w+))", "Isaac Newton, physicist");
+    std::string STR = "Isaac Newton, physicist";
+    auto m = re::search(R"(^(\w+) (\w+))", STR);
     if (m){
         std::cout << m->group(0) << std::endl;  //Isaac Newton
         std::cout << m->group(1) << std::endl;  //Isaac
@@ -350,7 +352,8 @@ Example 2:
 ```C++
 
     //We don't support match, use search instead
-    auto m = re::search(R"(^(?P<first_name>\w+) (?P<last_name>\w+))", "Malcolm Reynolds");
+    std::string STR = "Malcolm Reynolds";
+    auto m = re::search(R"(^(?P<first_name>\w+) (?P<last_name>\w+))", STR);
     if (m){
         std::cout << m->group("first_name") << std::endl;  //Malcolm
         std::cout << m->group("last_name") << std::endl;   //Reynolds
@@ -364,7 +367,8 @@ Example 3:
 ```C++
 
     //We don't support match, use search instead
-    auto m = re::search(R"(^(..)+)", "a1b2c3");
+    std::string STR = "a1b2c3";
+    auto m = re::search(R"(^(..)+)", STR);
     if (m){
         std::cout << m->group(1) << std::endl;  //c3
     }
@@ -386,7 +390,8 @@ Example 1:
 ```C++
 
     //We don't support match, use search instead
-    auto m = re::search(R"(^(\d+)\.(\d+))", "24.1632");
+    std::string STR = "24.1632";
+    auto m = re::search(R"(^(\d+)\.(\d+))", STR);
     if (m){
         auto v = m->groups();
         for (auto i = v.begin(); i < v.end(); i++){
@@ -394,17 +399,18 @@ Example 1:
         }
     }
 
-	//24
-	//1632
+    //24
+    //1632
 
 ```
 
 If we make the decimal place and everything after it optional, not all groups might participate in the match. These groups will default to None unless the default argument is given:
 
 ```C++
-
+    
     //We don't support match, use search instead
-    auto m = re::search(R"(^(\d+)\.?(\d+)?)", "24");
+    std::string STR = "24";
+    auto m = re::search(R"(^(\d+)\.?(\d+)?)", STR);
     if (m){
         auto v = m->groups();
         for (auto i = v.begin(); i < v.end(); i++){
@@ -412,7 +418,7 @@ If we make the decimal place and everything after it optional, not all groups mi
         }
     }
 
-	//24
+    //24
 
 ```
 
@@ -446,13 +452,13 @@ An example that will remove remove_this from email addresses:
 ####span([group])
 
 *Supported*
-	
+    
 std::vector<int> span(size_t i)
 
 Error Handling: No
 
-	return type: 
-	std::vector<int>   (size = 2)
+    return type: 
+    std::vector<int>   (size = 2)
 
 ####pos
 
