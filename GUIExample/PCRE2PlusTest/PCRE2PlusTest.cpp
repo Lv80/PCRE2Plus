@@ -3,7 +3,7 @@
 #include <wx/sysopt.h>
 #include <string>
 #include <vector>
-#include "../../PCRE2Plus/PCRE2Plus.h"
+#include "../../src/PCRE2Plus.h"
 
 
 using namespace PCRE2Plus;

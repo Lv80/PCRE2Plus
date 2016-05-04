@@ -111,7 +111,8 @@ int main(int argc, char* argv[]) {
     auto C = re::compile(c);
     if (C){
         PRINTLN("OK");
-        auto M = C->search("abc");
+        std::string STR = "abc";
+        auto M = C->search(STR);
         if (M){
             PRINTLN(ws2s(M->group()));
         }
@@ -125,7 +126,8 @@ int main(int argc, char* argv[]) {
     print_header("Test0.1");
 
     auto tmp = R"((\w+ )+)";
-    auto M = re::search(tmp , R"(abc def ghi )");
+    std::string STR = R"(abc def ghi )";
+    auto M = re::search(tmp , STR);
 	if (M){
         PRINTLN(M->group());
         auto v = M->groups();
@@ -143,7 +145,8 @@ int main(int argc, char* argv[]) {
 
     print_header("Test re::finditer");
     {
-        for (auto x = re::finditer(R"([A-Z])", "111A222B333C"); !x->AtEnd(); ++*x.get()){
+        std::string STR = "111A222B333C";
+        for (auto x = re::finditer(R"([A-Z])", STR); !x->AtEnd(); ++*x.get()){
             PRINTLN(x->Get()->group());
         }
     }
@@ -151,7 +154,8 @@ int main(int argc, char* argv[]) {
 
     print_header("Test re::split");
     {
-        auto v = re::split(R"((\d)(\d))", "abc00def11hig22");
+        std::string STR = "abc00def11hig22";
+        auto v = re::split(R"((\d)(\d))", STR);
         for (auto i = v.begin(); i < v.end(); i++){
             PRINTLN(*i);
         }
@@ -159,7 +163,8 @@ int main(int argc, char* argv[]) {
 
     print_header("Test re::findall");
     {
-        auto v = re::findall(R"(.+)", "abc def hig", re::IGNORECASE);
+        std::string STR = "abc def hig";
+        auto v = re::findall(R"(.+)", STR, re::IGNORECASE);
         PRINTLN(std::to_string(v.size()));;
 
         for (auto i = v.begin(); i < v.end(); i++){
@@ -170,7 +175,8 @@ int main(int argc, char* argv[]) {
     print_header("Test position");
     {
         auto pattern = re::compile(R"(d)");
-        auto N = pattern->search("dog", 1);
+        std::string STR = "dog";
+        auto N = pattern->search(STR, 1);
         if (N){
             PRINTLN(N->group());;
         }
@@ -179,7 +185,8 @@ int main(int argc, char* argv[]) {
     
     print_header("Test re::finditer");
     {
-        for (auto x = re::finditer(R"(\w+)", "abc def ghi"); !x->AtEnd(); ++*x.get()){
+        std::string STR = "abc def ghi";
+        for (auto x = re::finditer(R"(\w+)", STR); !x->AtEnd(); ++*x.get()){
             PRINTLN(x->Get()->group());
         }
     }
@@ -187,7 +194,8 @@ int main(int argc, char* argv[]) {
     print_header("Example in 2.7.4 - match group");
     {
         //We don't support match, use search instead
-        auto m = re::search(R"(^(\w+) (\w+))", "Isaac Newton, physicist");
+        std::string STR = "Isaac Newton, physicist";
+        auto m = re::search(R"(^(\w+) (\w+))", STR);
         if (m){
             PRINTLN(m->group(0));  //Isaac Newton
             PRINTLN(m->group(1));  //Isaac
@@ -198,7 +206,8 @@ int main(int argc, char* argv[]) {
     print_header("Example in 2.7.4 - match group");
     {
         //We don't support match, use search instead
-        auto m = re::search(R"(^(?P<first_name>\w+) (?P<last_name>\w+))", "Malcolm Reynolds");
+        std::string STR = "Malcolm Reynolds";
+        auto m = re::search(R"(^(?P<first_name>\w+) (?P<last_name>\w+))", STR);
         if (m){
             PRINTLN(m->group("first_name"));  //Malcolm
             PRINTLN(m->group("last_name"));   //Reynolds
@@ -210,7 +219,8 @@ int main(int argc, char* argv[]) {
     print_header("Example in 2.7.4 - match");
     {
         //We don't support match, use search instead
-        auto m = re::search(R"XX(^(..)+)XX", "a1b2c3");
+        std::string STR = "a1b2c3";
+        auto m = re::search(R"XX(^(..)+)XX", STR);
         if (m){
             PRINTLN(m->group(1));  //c3
         }
@@ -219,7 +229,8 @@ int main(int argc, char* argv[]) {
     print_header("Example in 2.7.4 - match groups");
     {
         //We don't support match, use search instead
-        auto m = re::search(R"(^(\d+)\.(\d+))", "24.1632");
+        std::string STR = "24.1632";
+        auto m = re::search(R"(^(\d+)\.(\d+))", STR);
         if (m){
             auto v = m->groups();
             for (auto i = v.begin(); i < v.end(); i++){
@@ -231,7 +242,8 @@ int main(int argc, char* argv[]) {
     print_header("Example in 2.7.4 - match groups");
     {
         //We don't support match, use search instead
-        auto m = re::search(R"(^(\d+)\.?(\d+)?)", "24");
+        std::string STR = "24";
+        auto m = re::search(R"(^(\d+)\.?(\d+)?)", STR);
         if (m){
             auto v = m->groups();
             for (auto i = v.begin(); i < v.end(); i++){
@@ -252,16 +264,18 @@ int main(int argc, char* argv[]) {
 
     print_header("Example in 2.7.2 re.sub");
     {
+        std::string STR = "def myfunc():";
         PRINTLN(re::sub(R"(def\s+([a-zA-Z_][a-zA-Z_0-9]*)\s*\(\s*\):)",
             R"(static PyObject*\npy_$1(void)\n{)",
-            "def myfunc():"));
+            STR));
         PRINTLN(std::to_string(re::getlasterror()));
         PRINTLN(re::getlasterrorstr());
     }
 
     print_header("Test Unicode");
     {
-        auto X = re::search(LR"(\p{L}+)", L"äbc");
+        std::wstring STR = L"äbc";
+        auto X = re::search(LR"(\p{L}+)", STR);
         if (X){
             PRINTLN(X->group());
         }
@@ -277,14 +291,16 @@ int main(int argc, char* argv[]) {
 #else
         setlocale(LC_CTYPE, "sv_SE");
 #endif
-        auto r = re::sub(LR"(\w+)", LR"(äbc)", LR"(Åbc)", 0, re::LOCALE); 
+        std::wstring STR = LR"(Åbc)";
+        auto r = re::sub(LR"(\w+)", LR"(äbc)", STR , 0, re::LOCALE); 
         PRINTLN(ws2s(r));
     }
 
     
     print_header("Test back reference");
     {
-        auto v = re::findall(R"((\w)\1\1)", "abc ddd hig", re::IGNORECASE);
+        std::string STR = "abc ddd hig";
+        auto v = re::findall(R"((\w)\1\1)", STR, re::IGNORECASE);
         PRINTLN(std::to_string(re::getlasterror()));
         PRINTLN(re::getlasterrorstr());
         PRINTLN(std::to_string(v.size()));;
@@ -297,24 +313,27 @@ int main(int argc, char* argv[]) {
     PRINTLN(ws2s(L"双喜雙喜!"));
     
     {
-        auto r = re::sub(LR"XX((\S)\S+)XX", LR"XX($1某某)XX", LR"(张三丰 周伯通)");
+        std::wstring STR = LR"(张三丰 周伯通)";
+        auto r = re::sub(LR"XX((\S)\S+)XX", LR"XX($1某某)XX", STR);
         PRINTLN(ws2s(r));
     }
     PRINTLN(std::to_string(re::getlasterror()));
     PRINTLN(re::getlasterrorstr());
 
-
-    auto v = re::findall(LR"(\p{Han})", L"赵 钱 孙 李");
-    for (auto i = v.begin(); i < v.end();i++){
-        PRINTLN(*i);
+    {
+        std::wstring STR = LR"(张三丰 周伯通)";
+        auto v = re::findall(LR"(\p{Han})", STR);
+        for (auto i = v.begin(); i < v.end(); i++){
+            PRINTLN(*i);
+        }
+        PRINTLN(std::to_string(re::getlasterror()));
+        PRINTLN(re::getlasterrorstr());
     }
-    PRINTLN(std::to_string(re::getlasterror()));
-    PRINTLN(re::getlasterrorstr());
-    
     
     print_header("G++ or clang++ to use unicode in basic string(seems not working)");
     {
-        auto v = re::findall(R"(\p{L})", "Å", re::U);
+        std::string STR = "Å";
+        auto v = re::findall(R"(\p{L})", STR, re::U);
         for (auto i = v.begin(); i < v.end(); i++){
             PRINTLN(*i);
         }
@@ -324,7 +343,8 @@ int main(int argc, char* argv[]) {
 
     print_header("G++ or clang++ to use wide unicode in basic string(seems not working)");
     {
-        auto v = re::findall(R"(\p{Han})", "梅 兰 竹 菊", re::U);
+        std::string STR = "梅 兰 竹 菊";
+        auto v = re::findall(R"(\p{Han})", STR, re::U);
         for (auto i = v.begin(); i < v.end();i++){
             PRINTLN(*i);
         }

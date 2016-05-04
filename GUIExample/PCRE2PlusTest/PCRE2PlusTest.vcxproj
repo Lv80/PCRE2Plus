@@ -86,7 +86,7 @@
     <ClInclude Include="Resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\PCRE2Plus\PCRE2Plus.cpp" />
+    <ClCompile Include="..\..\src\PCRE2Plus.cpp" />
     <ClCompile Include="PCRE2PlusTest.cpp" />
   </ItemGroup>
   <ItemGroup>

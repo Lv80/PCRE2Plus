@@ -26,7 +26,7 @@
     <ClCompile Include="PCRE2PlusTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PCRE2Plus\PCRE2Plus.cpp">
+    <ClCompile Include="..\..\src\PCRE2Plus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

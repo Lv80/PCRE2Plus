@@ -7,9 +7,38 @@
 
 #PCRE2 Plus
 
+##Recent Change
+
+I. Build option -DHEAP_MATCH_RECURSE=1 add in win32 build bat file to avoid stack overflow issue in long string. No suggestion to change on Linux build script yet(will be done later)
+
+
+II. No longer allows to put string directly to search function as PCRE2Plus was facing a performance issue in finditer function, in the past we copy string in each search function which is really slow, no we use string reference. This is the same behavior as std::regex
+
+For Example:
+
+Following code will fail, you may got compiler error:
+error C2280: 'std::vector<std::string,std::allocator<_Ty>> PCRE2Plus::re::findall(const std::string &,const std::string &&,size_t,int)' : attempting to reference a deleted function
+
+```c++
+
+    std::string STR = "abc def hig";
+    auto v = re::findall(R"(.+)", STR);
+
+```
+
+The code **must** be changed to following
+
+```c++
+
+    std::string STR = "abc def hig";
+    auto v = re::findall(R"(.+)", STR);
+
+```
+
+
 ##Description
 
-A python style re wrapper for PCRE2, C++ 11 standard followed, easy handling by using smart pointers. 
+A Python style regular expression wrapper for PCRE2 (pcre project [http://www.pcre.org/](http://www.pcre.org/)), using C++ 11 standard.
 
 Unicode and wide string friendly.
 
@@ -31,20 +60,20 @@ Alternately, pcre2-10.21 is cached in this repo: [pcre-2-10.21.zip](3PP/pcre2-10
 Download build bat file from this repo: 
 [build_pcre2_10.21.bat](3PP/build_pcre2_10.21.bat) 
 
-	1. Extract pcre2-10.21.zip
-	2. Place the build bat file in the source
-	2. Start VC++ command line
-	3. Go the directory of pcre2 source
-	4. Execute build bat
-	5. If everything OK, you'll get three lib files: libpcre2-8.lib libpcre2-16.lib libpcre2-32.lib
+    1. Extract pcre2-10.21.zip
+    2. Place the build bat file in the source
+    2. Start VC++ command line
+    3. Go the directory of pcre2 source
+    4. Execute build bat
+    5. If everything OK, you'll get six lib files: libpcre2-8.lib libpcre2-16.lib libpcre2-32.lib libpcre2-8d.lib libpcre2-16d.lib libpcre2-32d.lib 
 
 ###Install on *Nix (VC++)
 
-	1. Extract pcre2-10.21.zip
-	2. Go to pcre2 source directory
-	2. ./configuere   --enable-pcre2-16 --enable-pcre2-32
-	3. make && make install 
-	
+    1. Extract pcre2-10.21.zip
+    2. Go to pcre2 source directory
+    2. ./configuere --enable-pcre2-16 --enable-pcre2-32
+    3. make && make install 
+    
 **make sure 16 and 32 bit character support are supported besides 8 bit**
 
 ##Usage
@@ -54,9 +83,10 @@ Put PCRE2 source directory to C++ project include and library
 Put PCRE2 lib files to project linker parameter (all 8, 16 and 32 bit)
 
 ### Add PCRE2 to VC++
+Presume the pcre2 is installed to c:\usr\lib\pcre2-10.21
 ![vcdir](Img/vcdir.png)
 
-With macro supported, it's possible for VSC++ to choose correct lib. (Do not specify lib name in "link/input" dialog.
+With macro supported, it's possible for VS C++ to choose correct lib. (Do not specify lib name in "link/input" dialog.
 
 ### Add PCRE2 to Xcode
 Presume the pcre2 is installed to ~/.local
@@ -77,7 +107,8 @@ Add [PCRE2Plus.cpp](PCRE2Plus/PCRE2Plus.cpp) to Project
     auto Regex = re::compile(c);
     if (Regex){
         std::cout<<"OK"<<std::endl;
-        auto M = Regex->search("abc");
+        std::string STR = "abc";
+        auto M = Regex->search(STR);
         if (M){
             std::cout<<(M->group())<<std::endl;
         }
@@ -108,28 +139,29 @@ All Unicode Chars shall be processed by wide string(std::wstring, begins with "L
 
 And make sure, once the wide string is used for strings, pattern and repl **MUST** be wide string also.
 
-	There are two kinds of objects: ObjFoo and ObjFooW, the latter one is for wide string. 
-	
-	Every logical code has two copys, one for ANSI and the other for wide string.
+    There are two kinds of objects: ObjFoo and ObjFooW, the latter one is for wide string. 
+    
+    Every logical code has two copys, one for ANSI and the other for wide string.
 
-	Users shall not aware of the difference as they can use keyword auto to take the object(smart pointer) returned from compile or search functions. 
-	
-	Of course, user shall use std::string or std::wstring in the last phase based on they input string type.
+    Users shall not aware of the difference as they can use keyword auto to take the object(smart pointer) returned from compile or search functions. 
+    
+    Of course, user shall use std::string or std::wstring in the last phase based on they input string type.
 
 
 Example of matching Chinese chars (wide string)
 
 ```c++
 
-    auto v = re::findall(LR"(\p{Han})", L"赵 钱 孙 李");
+    std::wstring STR =  L"赵 钱 孙 李";
+    auto v = re::findall(LR"(\p{Han})",STR);
     for (auto i = v.begin(); i < v.end();i++){
         std::wcout<<(*i)<<std::endl;
     }
 
-	//赵
-	//钱
-	//孙
-	//李
+    //赵
+    //钱
+    //孙
+    //李
     
 ```
 
@@ -145,12 +177,15 @@ nullptr or empty string or empty vector will be returned if anything goes wrong
 
 Use following function for regexp compilation error or sub/subn function
 
-re::getlasterror()  // != 100 for abnormal cases
+```c++
 
-re::getlasterrorstr()
+    re::getlasterror()  // != 100 for abnormal cases
 
-re::geterroroffset()
+    re::getlasterrorstr()
 
+    re::geterroroffset()
+
+```
 
 Examples:
 There is a wxwidgets based regex test project in repo
@@ -219,7 +254,6 @@ Coding style for PCRE2Plus:
 tab => 4 spaces
 
 Unix Line ending
-
 
 ## License
 
