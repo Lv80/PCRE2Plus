@@ -71,7 +71,7 @@ Download build bat file from this repo:
 
     1. Extract pcre2-10.21.zip
     2. Go to pcre2 source directory
-    2. ./configuere --enable-pcre2-16 --enable-pcre2-32
+    2. ./configure --enable-pcre2-16 --enable-pcre2-32 --disable-stack-for-recursion
     3. make && make install 
     
 **make sure 16 and 32 bit character support are supported besides 8 bit**
