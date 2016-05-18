@@ -123,6 +123,60 @@ Add [PCRE2Plus.cpp](PCRE2Plus/PCRE2Plus.cpp) to Project
 
 ##Syntax
 
+###Cache handling
+There is a cache mechanism in the module now.
+
+when then cache is enabled (**re::usecache = true;**) following function will cache the regex object:
+
+    re::search, 
+    re::split
+    re::findall
+    re::finditer
+    re::sub
+    re::subn
+
+In this case you don't necessary to generated a re object in loops:
+e.g 
+
+Before:
+
+    std::vector<std::string> Lines;
+    Lines = ... //pushing some data
+    for (const auto & i : Lines){
+        if (re::search("blabla", i)){
+            //Do something
+        }
+    }
+
+is slow than
+
+    std::vector<std::string> Lines;
+    auto R = re::compile("blabla");
+    Lines = ... //pushing some data
+    for (const auto & i : Lines){
+        if (R->search("blabla", i)){
+            //Do something
+        }
+    }
+
+After using Cache:
+
+    re::usecache = true;
+
+The performance shall be very close.
+
+Other cache functions:
+
+    re::getcachesize() // Get Cache Count
+
+    re::purgecache()  // Purge Cache
+
+**NOTE**
+
+Cache is not enabled by default.
+
+###Python like Syntax
+
 Python re syntax document: [https://docs.python.org/2/library/re.html](https://docs.python.org/2/library/re.html)
 
 BASELINE: 2.7.11

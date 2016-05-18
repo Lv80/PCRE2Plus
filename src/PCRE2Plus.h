@@ -70,7 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 #include <memory>
 #include <tuple>
-
+#include <map>
 
 namespace PCRE2Plus{
     //==========================================================================
@@ -91,12 +91,19 @@ namespace PCRE2Plus{
         static pcre2_compile_context_8 * ccontext_8;
         static pcre2_compile_context * ccontext;
     public:
+        static bool usecache;
         class RegexObject;
         class MatchObject;
         class iter;
         class RegexObjectW;
         class MatchObjectW;
         class iterW;
+    protected:
+        static std::map<std::pair<std::string, int>, std::shared_ptr<re::RegexObject>> Cache;
+        static std::map<std::pair<std::wstring, int>, std::shared_ptr<re::RegexObjectW>> CacheW;
+    public:
+        static int getcachesize();
+        static void purgecache();
         static std::shared_ptr<re::RegexObject> compile(const std::string & pattern, int flags = 0);
         static std::shared_ptr<re::RegexObjectW> compile(const std::wstring & pattern, int flags = 0);
         static std::unique_ptr<re::MatchObject> search(const std::string & pattern, const std::string & Str, int flags = 0);
@@ -130,10 +137,8 @@ namespace PCRE2Plus{
         static std::string getlasterrorstr();
     public:
         static const size_t DOTALL = PCRE2_DOTALL;
-/*
-we force using PCRE2_NEWLINE_ANY to match any chars, no matter how complier parameter is given.
-*/
         static const size_t S = DOTALL;
+        //we force using PCRE2_NEWLINE_ANY to match any chars, no matter how complier parameter is given.
         static const size_t MULTLINE = PCRE2_MULTILINE;
         static const size_t M = MULTLINE;
         static const size_t IGNORECASE = PCRE2_CASELESS;
@@ -142,7 +147,7 @@ we force using PCRE2_NEWLINE_ANY to match any chars, no matter how complier para
         static const size_t X = VERBOSE;
         static const size_t U = PCRE2_UCP | PCRE2_UTF;
 
-        static const size_t LOCALE = 0x10000000u;  /* Not yet used by pcre2 */
+        static const size_t LOCALE = 0x10000000u;  /* TODO: Not yet used by pcre2 */
         static const size_t L = LOCALE;
 
 

@@ -5,7 +5,159 @@ Presume following code applied
 
 
 # 7.2. re — Regular expression operations
-*supported by pcre2*
+
+'.'
+
+*Supported*
+
+'^'
+
+*Supported*
+
+
+'$'
+
+*Supported*
+
+'*'
+
+*Supported*
+
+'+'
+
+*Supported*
+
+'?'
+
+*Supported*
+
+*?, +?
+
+*Supported*
+
+??
+
+*Need further check*
+
+{m}
+
+*Supported*
+
+{m,n}
+
+*Supported*
+
+{m,n}?
+
+*Need further check*
+
+'\'
+
+*Supported*
+
+[]
+
+*Supported*
+
+'|'
+
+*Supported*
+
+(...)
+
+*Supported*
+
+(?...)
+
+*Supported*
+
+(?iLmsux)
+
+*Need further check*
+
+(?:...)
+
+*Need further check*
+
+(?P<name>...)
+
+*Need further check*
+
+(?P=name)
+
+*Need further check*
+
+(?#...)
+
+*Need further check*
+
+(?=...)
+
+*Supported*
+
+(?!...)
+
+*Need further check*
+
+(?<=...)
+
+*Supported*
+
+(?<!...)
+
+*Need further check*
+
+(?(id/name)yes-pattern|no-pattern)
+
+*Need further check*
+
+\number
+
+*Need further check*
+
+\A
+
+*Need further check*
+
+\b
+
+*Supported*
+
+\B
+
+*Supported*
+
+\d
+
+*Need further check unicode*
+
+\D
+
+*Need further check unicode*
+
+\s
+
+*Need further check unicode*
+
+\S
+
+*Need further check unicode*
+
+\w
+
+*Need further check unicode*
+
+\W
+
+*Need further check unicode*
+
+\Z
+
+*Need further check*
+
+
+
+
 
 *Note*
     
@@ -15,6 +167,7 @@ Presume following code applied
 
 
 ##7.2.1. Regular Expression Syntax
+
 *supported by pcre2*
 
 ##7.2.2. Module Contents

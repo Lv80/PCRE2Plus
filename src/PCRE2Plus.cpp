@@ -37,6 +37,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using namespace PCRE2Plus;
 int re::lasterror = 0;
 size_t re::erroroffset = 0;
+bool re::usecache = false;
+std::map<std::pair<std::string, int>, std::shared_ptr<re::RegexObject>> re::Cache;
+std::map<std::pair<std::wstring, int>, std::shared_ptr<re::RegexObjectW>> re::CacheW;
 pcre2_compile_context_8 * re::ccontext_8 = re::CreateCContext_8();
 pcre2_compile_context * re::ccontext = re::CreateCContext();
 
@@ -127,6 +130,15 @@ std::wstring re::escape(const std::wstring & unquoted){
     return result;
 }
 //------------------------------------------------------------------------------
+int re::getcachesize(){
+    return re::Cache.size() + re::CacheW.size();
+}
+//------------------------------------------------------------------------------
+void re::purgecache(){
+    re::Cache.clear();
+    re::CacheW.clear();
+}
+//------------------------------------------------------------------------------
 std::shared_ptr<re::RegexObject> re::compile(const std::string & pattern, int flags){
     flags = flags | PCRE2_DUPNAMES;
     pcre2_code_8 * re_code = NULL;
@@ -183,104 +195,296 @@ std::shared_ptr<re::RegexObjectW> re::compile(const std::wstring & pattern, int 
 //------------------------------------------------------------------------------
 std::tuple<std::string, size_t> re::subn(const std::string & pattern, const std::string & repl, const std::string & Str, size_t count, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        return std::make_tuple("", -1);
+    std::shared_ptr <re::RegexObject> p_re;
+    if (re::usecache) {
+        if (re::Cache.find(std::make_pair(pattern, flags)) != re::Cache.end()){
+            p_re = re::Cache[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return std::make_tuple("", -1);
+            }
+            re::Cache[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return std::make_tuple("", -1);
+        }
     }
     return p_re->subn(repl, Str, count);
 }
 //------------------------------------------------------------------------------
 std::tuple<std::wstring, size_t> re::subn(const  std::wstring & pattern, const std::wstring & repl, const  std::wstring & Str, size_t count, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        return std::make_tuple(L"", -1);
+    std::shared_ptr <re::RegexObjectW> p_re;
+    if (re::usecache) {
+        if (re::CacheW.find(std::make_pair(pattern, flags)) != re::CacheW.end()){
+            p_re = re::CacheW[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return std::make_tuple(L"", -1);
+            }
+            re::CacheW[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return std::make_tuple(L"", -1);
+        }
     }
     return p_re->subn(repl, Str, count);
 }
 //------------------------------------------------------------------------------
 std::string re::sub(const  std::string & pattern, const  std::string & repl, const std::string & Str, size_t count, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        return "";
+    std::shared_ptr <re::RegexObject> p_re;
+    if (re::usecache){
+        if (re::Cache.find(std::make_pair(pattern, flags)) != re::Cache.end()){
+            p_re = re::Cache[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return "";
+            }
+            re::Cache[std::make_pair(pattern, flags)] = p_re;
+        }
     }
-    std::string r = p_re->sub(repl, Str, count);
-    return r;
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return "";
+        }
+    }
+    return p_re->sub(repl, Str, count);
 }
 //------------------------------------------------------------------------------
  std::wstring re::sub(const std::wstring & pattern, const  std::wstring & repl, const std::wstring & Str, size_t count, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        return L"";
+    std::shared_ptr <re::RegexObjectW> p_re;
+    if (re::usecache){
+        if (re::CacheW.find(std::make_pair(pattern, flags)) != re::CacheW.end()){
+            p_re = re::CacheW[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return L"";
+            }
+            re::CacheW[std::make_pair(pattern, flags)] = p_re;
+        }
     }
-     std::wstring r=  p_re->sub(repl, Str, count);
-    return r;
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return L"";
+        }
+    }
+    return p_re->sub(repl, Str, count);
 }
 //------------------------------------------------------------------------------
 std::unique_ptr<re::MatchObject> re::search(const std::string & pattern, const std::string & Str, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        return nullptr;
+    std::shared_ptr <re::RegexObject> p_re;
+    if (re::usecache){
+        if (re::Cache.find(std::make_pair(pattern, flags)) != re::Cache.end()){
+            p_re = re::Cache[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return nullptr;
+            }
+            re::Cache[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return nullptr;
+        }
     }
     return p_re->search(Str);
 }
 //------------------------------------------------------------------------------
 std::unique_ptr<re::MatchObjectW> re::search(const std::wstring & pattern, const std::wstring & Str, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        return nullptr;
+    std::shared_ptr <re::RegexObjectW> p_re;
+    if (re::usecache){
+        if (re::CacheW.find(std::make_pair(pattern, flags)) != re::CacheW.end()){
+            p_re = re::CacheW[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return nullptr;
+            }
+            re::CacheW[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return nullptr;
+        }
     }
     return p_re->search(Str);
 }
 //------------------------------------------------------------------------------
 std::vector<std::string> re::split(const std::string & pattern, const std::string & Str,size_t maxsplit, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        std::vector<std::string> v;
-        return v;
+    std::shared_ptr <re::RegexObject> p_re;
+    if (re::usecache){
+        if (re::Cache.find(std::make_pair(pattern, flags)) != re::Cache.end()){
+            p_re = re::Cache[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                std::vector<std::string> v;
+                return v;
+            }
+            re::Cache[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            std::vector<std::string> v;
+            return v;
+        }
+    }
+    return p_re->split(Str);
+}
+//------------------------------------------------------------------------------
+std::vector<std::wstring> re::split(const std::wstring & pattern, const std::wstring & Str, size_t maxsplit, int flags){
+    flags = flags | PCRE2_DUPNAMES;
+    std::shared_ptr <re::RegexObjectW> p_re;
+    if (re::usecache){
+        if (re::CacheW.find(std::make_pair(pattern, flags)) != re::CacheW.end()){
+            p_re = re::CacheW[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                std::vector<std::wstring> v;
+                return v;
+            }
+            re::CacheW[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            std::vector<std::wstring> v;
+            return v;
+        }
     }
     return p_re->split(Str);
 }
 //------------------------------------------------------------------------------
 std::vector<std::string> re::findall(const std::string & pattern, const std::string & Str, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        std::vector<std::string> v;
-        return v;
+    std::shared_ptr <re::RegexObject> p_re;
+    if (re::usecache){
+        if (re::Cache.find(std::make_pair(pattern, flags)) != re::Cache.end()){
+            p_re = re::Cache[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                std::vector<std::string> v;
+                return v;
+            }
+            re::Cache[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            std::vector<std::string> v;
+            return v;
+        }
     }
     return p_re->findall(Str);
 }
 //------------------------------------------------------------------------------
 std::vector<std::wstring> re::findall(const std::wstring & pattern, const std::wstring & Str, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        std::vector<std::wstring> v;
-        return v;
+    std::shared_ptr <re::RegexObjectW> p_re;
+    if (re::usecache){
+        if (re::CacheW.find(std::make_pair(pattern, flags)) != re::CacheW.end()){
+            p_re = re::CacheW[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                std::vector<std::wstring> v;
+                return v;
+            }
+            re::CacheW[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            std::vector<std::wstring> v;
+            return v;
+        }
     }
     return p_re->findall(Str);
 }
 //------------------------------------------------------------------------------
 std::unique_ptr<re::iter> re::finditer(const std::string & pattern, const std::string & Str, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        return nullptr;
+    std::shared_ptr <re::RegexObject> p_re;
+    if (re::usecache){
+        if (re::Cache.find(std::make_pair(pattern, flags)) != re::Cache.end()){
+            p_re = re::Cache[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return nullptr;
+            }
+            re::Cache[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return nullptr;
+        }
     }
     return p_re->finditer(Str);
 }
 //------------------------------------------------------------------------------
 std::unique_ptr<re::iterW> re::finditer(const std::wstring & pattern, const std::wstring & Str, int flags){
     flags = flags | PCRE2_DUPNAMES;
-    auto p_re = re::compile(pattern, flags);
-    if (!p_re){
-        return nullptr;
+    std::shared_ptr <re::RegexObjectW> p_re;
+    if (re::usecache){
+        if (re::CacheW.find(std::make_pair(pattern, flags)) != re::CacheW.end()){
+            p_re = re::CacheW[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return nullptr;
+            }
+            re::CacheW[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return nullptr;
+        }
     }
     return p_re->finditer(Str);
 }
@@ -521,7 +725,7 @@ std::vector<std::string> re::RegexObject::split(const std::string & Str, size_t 
         }
         ++(*I.get());
     }
-    v.push_back(Str.substr(Pos, Str.size() - Pos));
+    v.push_back(Str.substr(Pos, Str.length() - Pos));
     return v;
 }
 //------------------------------------------------------------------------------
@@ -549,7 +753,7 @@ std::vector<std::wstring> re::RegexObjectW::split(const std::wstring & Str, size
         }
         ++(*I.get());
     }
-    v.push_back(Str.substr(Pos, Str.size() - Pos));
+    v.push_back(Str.substr(Pos, Str.length() - Pos));
     return v;
 }
 //------------------------------------------------------------------------------
@@ -633,9 +837,11 @@ std::vector<std::wstring> re::RegexObjectW::findall(const std::wstring & Str, si
 //------------------------------------------------------------------------------
 std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, const std::string & Str, size_t count){
     if (this->m_pattern == ""){
-        return std::make_tuple("", -1);
+        return std::make_tuple(Str, -1);
     }
-    pcre2_match_data_8 * match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
+    }
     std::string Str1 = Str;
     size_t option = PCRE2_SUBSTITUTE_OVERFLOW_LENGTH | PCRE2_SUBSTITUTE_EXTENDED;
     if (count == 0){
@@ -644,7 +850,6 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
     PCRE2_UCHAR8 * outputbuffer = nullptr;
     PCRE2_SIZE outlength = Str1.length() * 2;
     PCRE2_SIZE * p_outlength = &outlength;
-
     int c = 0;
     size_t i = 0;
     while(i <= count){
@@ -652,13 +857,13 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
         int ret = pcre2_substitute_8(
             (pcre2_code_8 *)m_re,
             (PCRE2_SPTR8)Str1.c_str(),
-            Str1.size(), // * sizeof(char),
+            Str1.length(),
             0,
             (int)option,
-            match_data,
+            m_match_data,
             NULL,
             (PCRE2_SPTR8)repl.c_str(),
-            repl.size(),
+            repl.length(),
             (PCRE2_UCHAR8 *)outputbuffer,
             p_outlength
             );
@@ -684,17 +889,17 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
         c += ret;
         i++;
     }
-    Str1.append("\0");
-    pcre2_match_data_free_8(match_data);
     return std::make_tuple(Str1,c);
 }
 //------------------------------------------------------------------------------
 std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & repl, const std::wstring & Str, size_t count){
     if (this->m_pattern == L""){
-        return std::make_tuple(L"", -1);
+        return std::make_tuple(Str, -1);
     }
-    pcre2_match_data * match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
-     std::wstring Str1 = Str;
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
+    }
+    std::wstring Str1 = Str;
     size_t option = PCRE2_SUBSTITUTE_OVERFLOW_LENGTH | PCRE2_SUBSTITUTE_EXTENDED;
     if (count == 0){
         option |= PCRE2_SUBSTITUTE_GLOBAL;
@@ -710,13 +915,13 @@ std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & rep
         int ret = pcre2_substitute(
             (pcre2_code *)m_re,
             (PCRE2_SPTR)Str1.c_str(),
-            Str1.size(), // * sizeof(wchar_t),
+            Str1.length(),
             0,
             (int)option,
-            match_data,
+            m_match_data,
             NULL,
             (PCRE2_SPTR)repl.c_str(),
-            repl.size(),
+            repl.length(),
             (PCRE2_UCHAR *)outputbuffer,
             p_outlength
             );
@@ -734,7 +939,7 @@ std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & rep
                 return std::make_tuple(L"", -1);
             }
         }
-         std::wstring r((wchar_t *)outputbuffer);
+        std::wstring r((wchar_t *)outputbuffer);
         r = r.substr(0, outlength);
         Str1 = r;
         free(outputbuffer);
@@ -742,19 +947,122 @@ std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & rep
         c += ret;
         i++;
     }
-    Str1.append(L"\0");
-    pcre2_match_data_free(match_data);
     return std::make_tuple(Str1, c);
 }
 //------------------------------------------------------------------------------
 std::string re::RegexObject::sub(const std::string & repl, const std::string & Str, size_t count){
-    std::string r = std::get<0>(this->subn(repl, Str, count));
-    return r;
+    if (this->m_pattern == ""){
+        return Str;
+    }
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
+    }
+    std::string Str1 = Str;
+    size_t option = PCRE2_SUBSTITUTE_OVERFLOW_LENGTH | PCRE2_SUBSTITUTE_EXTENDED;
+    if (count == 0){
+        option |= PCRE2_SUBSTITUTE_GLOBAL;
+    }
+    PCRE2_UCHAR8 * outputbuffer = nullptr;
+    PCRE2_SIZE outlength = Str1.length() * 2;
+    PCRE2_SIZE * p_outlength = &outlength;
+    int c = 0;
+    size_t i = 0;
+    while (i <= count){
+        outputbuffer = (PCRE2_UCHAR8 *)malloc(sizeof(PCRE2_UCHAR8 *) * outlength);
+        int ret = pcre2_substitute_8(
+            (pcre2_code_8 *)m_re,
+            (PCRE2_SPTR8)Str1.c_str(),
+            Str1.length(),
+            0,
+            (int)option,
+            m_match_data,
+            NULL,
+            (PCRE2_SPTR8)repl.c_str(),
+            repl.length(),
+            (PCRE2_UCHAR8 *)outputbuffer,
+            p_outlength
+            );
+        if (ret == 0){
+            break;
+        }
+        if (ret < 0){
+            if (ret == PCRE2_ERROR_NOMEMORY){
+                free(outputbuffer);
+                outputbuffer = nullptr;
+                continue;
+            }
+            else{
+                re::lasterror = ret;
+                return "";
+            }
+        }
+        std::string r((char *)outputbuffer);
+        r = r.substr(0, outlength);
+        Str1 = r;
+        free(outputbuffer);
+        outputbuffer = nullptr;
+        c += ret;
+        i++;
+    }
+    return Str1;
 }
 //------------------------------------------------------------------------------
 std::wstring re::RegexObjectW::sub(const std::wstring & repl, const std::wstring & Str, size_t count){
-    std::wstring r = std::get<0>(this->subn(repl, Str, count));
-    return r;
+    if (this->m_pattern == L""){
+        return Str;
+    }
+    if (!m_match_data){
+        m_match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
+    }
+    std::wstring Str1 = Str;
+    size_t option = PCRE2_SUBSTITUTE_OVERFLOW_LENGTH | PCRE2_SUBSTITUTE_EXTENDED;
+    if (count == 0){
+        option |= PCRE2_SUBSTITUTE_GLOBAL;
+    }
+    PCRE2_UCHAR * outputbuffer = nullptr;
+    PCRE2_SIZE outlength = Str1.length() * 2;
+    PCRE2_SIZE * p_outlength = &outlength;
+
+    int c = 0;
+    size_t i = 0;
+    while (i <= count){
+        outputbuffer = (PCRE2_UCHAR *)malloc(sizeof(PCRE2_UCHAR *) * outlength);
+        int ret = pcre2_substitute(
+            (pcre2_code *)m_re,
+            (PCRE2_SPTR)Str1.c_str(),
+            Str1.length(),
+            0,
+            (int)option,
+            m_match_data,
+            NULL,
+            (PCRE2_SPTR)repl.c_str(),
+            repl.length(),
+            (PCRE2_UCHAR *)outputbuffer,
+            p_outlength
+            );
+        if (ret == 0){
+            break;
+        }
+        if (ret < 0){
+            if (ret == PCRE2_ERROR_NOMEMORY){
+                free(outputbuffer);
+                outputbuffer = nullptr;
+                continue;
+            }
+            else{
+                re::lasterror = ret;
+                return L"";
+            }
+        }
+        std::wstring r((wchar_t *)outputbuffer);
+        r = r.substr(0, outlength);
+        Str1 = r;
+        free(outputbuffer);
+        outputbuffer = nullptr;
+        c += ret;
+        i++;
+    }
+    return Str1;
 }
 //------------------------------------------------------------------------------
 std::unique_ptr<re::MatchObject> re::RegexObject::search(const std::string & Str, size_t pos, int endpos){
