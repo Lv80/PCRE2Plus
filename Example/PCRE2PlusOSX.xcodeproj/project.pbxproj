@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		782849DE1C89C2960050F18B /* example.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 782849DD1C89C2960050F18B /* example.cpp */; };
-		78A627D11C80B76900FDFF50 /* PCRE2Plus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78A627D01C80B76900FDFF50 /* PCRE2Plus.cpp */; };
+		78C3E38D1CE4CFB700A8A24A /* example.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78C3E38C1CE4CFB700A8A24A /* example.cpp */; };
+		78C3E3931CE4CFFD00A8A24A /* PCRE2Plus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78C3E3911CE4CFFD00A8A24A /* PCRE2Plus.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,10 +24,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		782849DD1C89C2960050F18B /* example.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = example.cpp; path = PCRE2Plus/example.cpp; sourceTree = SOURCE_ROOT; };
 		786A82E61C80B62300458646 /* PCRE2PlusOSX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PCRE2PlusOSX; sourceTree = BUILT_PRODUCTS_DIR; };
-		78A627D01C80B76900FDFF50 /* PCRE2Plus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCRE2Plus.cpp; path = PCRE2Plus/PCRE2Plus.cpp; sourceTree = SOURCE_ROOT; };
-		78A627D21C80B9D700FDFF50 /* PCRE2Plus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRE2Plus.h; path = PCRE2Plus/PCRE2Plus.h; sourceTree = SOURCE_ROOT; };
+		78C3E38C1CE4CFB700A8A24A /* example.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = example.cpp; sourceTree = SOURCE_ROOT; };
+		78C3E3911CE4CFFD00A8A24A /* PCRE2Plus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PCRE2Plus.cpp; path = ../../src/PCRE2Plus.cpp; sourceTree = "<group>"; };
+		78C3E3921CE4CFFD00A8A24A /* PCRE2Plus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PCRE2Plus.h; path = ../../src/PCRE2Plus.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,9 +60,9 @@
 		786A82E81C80B62300458646 /* PCRE2Plus */ = {
 			isa = PBXGroup;
 			children = (
-				782849DD1C89C2960050F18B /* example.cpp */,
-				78A627D21C80B9D700FDFF50 /* PCRE2Plus.h */,
-				78A627D01C80B76900FDFF50 /* PCRE2Plus.cpp */,
+				78C3E3911CE4CFFD00A8A24A /* PCRE2Plus.cpp */,
+				78C3E3921CE4CFFD00A8A24A /* PCRE2Plus.h */,
+				78C3E38C1CE4CFB700A8A24A /* example.cpp */,
 			);
 			name = PCRE2Plus;
 			path = PCRE2PlusOSX;
@@ -124,8 +124,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				782849DE1C89C2960050F18B /* example.cpp in Sources */,
-				78A627D11C80B76900FDFF50 /* PCRE2Plus.cpp in Sources */,
+				78C3E3931CE4CFFD00A8A24A /* PCRE2Plus.cpp in Sources */,
+				78C3E38D1CE4CFB700A8A24A /* example.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
