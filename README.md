@@ -223,7 +223,7 @@ Other cache functions:
 
     re::getcachesize() // Get Cache Count
 
-    re::purgecache()  // Purge Cache
+    re::purge()  // Purge Cache
 
 ```
 

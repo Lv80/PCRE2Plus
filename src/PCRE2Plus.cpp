@@ -134,7 +134,7 @@ int re::getcachesize(){
     return re::Cache.size() + re::CacheW.size();
 }
 //------------------------------------------------------------------------------
-void re::purgecache(){
+void re::purge(){
     re::Cache.clear();
     re::CacheW.clear();
 }
@@ -1422,6 +1422,16 @@ re::iterW & re::iterW::operator ++() {
         }
     }
     return * this;
+}
+//------------------------------------------------------------------------------
+void re::iter::Next() {
+    // we make ++X and X++ the same...
+    operator++(); // pre-increment
+}
+//------------------------------------------------------------------------------
+void re::iterW::Next() {
+    // we make ++X and X++ the same...
+    operator++(); // pre-increment
 }
 //------------------------------------------------------------------------------
 re::iter & re::iter::operator ++(int) {

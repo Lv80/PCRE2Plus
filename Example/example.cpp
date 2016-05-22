@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
     print_header("Test re::finditer");
     {
         std::string STR = "111A222B333C";
-        for (auto x = re::finditer(R"([A-Z])", STR); !x->AtEnd(); ++*x.get()){
+        for (auto x = re::finditer(R"([A-Z])", STR); !x->AtEnd(); x->Next()){
             PRINTLN(std::to_string(x->Get()->start()) + " " + std::to_string(x->Get()->end()) + " " + x->Get()->group());
         }
     }
@@ -158,7 +158,7 @@ int main(int argc, char* argv[]) {
     print_header("Test re::finditer 2");
     {
         std::string STR = "ABC def ggg";
-        for (auto x = re::finditer("", STR); !x->AtEnd(); ++*x.get()){
+        for (auto x = re::finditer("", STR); !x->AtEnd(); x->Next()){
             PRINTLN(std::to_string(x->Get()->start()) +" " + std::to_string(x->Get()->end())+ " " + x->Get()->group());
         }
     }
@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
     print_header("Test re::finditer 3");
     {
         std::string STR = "abc def ghi";
-        for (auto x = re::finditer(R"(\w+)", STR); !x->AtEnd(); ++*x.get()){
+        for (auto x = re::finditer(R"(\w+)", STR); !x->AtEnd(); x->Next()){
             PRINTLN(std::to_string(x->Get()->start()) + " " + std::to_string(x->Get()->end()) + " " + x->Get()->group());
         }
     }

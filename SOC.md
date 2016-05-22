@@ -296,7 +296,7 @@ Example:
 ```C++
 
     std::string STR = "abc def ghi";
-    for (auto x = re::finditer(R"(\w+)", STR); !x->AtEnd(); ++*x.get()){
+    for (auto x = re::finditer(R"(\w+)", STR); !x->AtEnd(); x->Next()){
         std::cout << x->Get()->group(0) << std::endl;
     }
 
@@ -336,7 +336,11 @@ Error Handling: No
 
 ####re.purge()
 
-*Not supported*
+*Supported*
+
+*Note:*
+
+    Need to be used with re::usecache = true; it's false by default.
 
 ####exception re.error
 

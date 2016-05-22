@@ -103,7 +103,7 @@ namespace PCRE2Plus{
         static std::map<std::pair<std::wstring, int>, std::shared_ptr<re::RegexObjectW>> CacheW;
     public:
         static int getcachesize();
-        static void purgecache();
+        static void purge();
         static std::shared_ptr<re::RegexObject> compile(const std::string & pattern, int flags = 0);
         static std::shared_ptr<re::RegexObjectW> compile(const std::wstring & pattern, int flags = 0);
         static std::unique_ptr<re::MatchObject> search(const std::string & pattern, const std::string & Str, int flags = 0);
@@ -229,7 +229,7 @@ namespace PCRE2Plus{
             iter(std::shared_ptr<RegexObject> regexobj, const std::string & Str, int endpos = -1);
             std::unique_ptr<MatchObject> Get();
             bool AtEnd();
-            void next();
+            void Next();
             iter & operator ++();
             iter & operator ++(int);
         };
@@ -304,7 +304,7 @@ namespace PCRE2Plus{
             iterW(std::shared_ptr<RegexObjectW> regexobj, const std::wstring & Str, int endpos = -1);
             std::unique_ptr<MatchObjectW> Get();
             bool AtEnd();
-            void next();
+            void Next();
             iterW & operator ++();
             iterW & operator ++(int);
         };
