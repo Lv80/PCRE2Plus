@@ -73,7 +73,7 @@ Presume following code applied
 
 (?iLmsux)
 
-*Need further check*
+*i,m,x shall be suppoted*
 
 (?:...)
 
@@ -81,7 +81,7 @@ Presume following code applied
 
 (?P<name>...)
 
-*Need further check*
+*Supported*
 
 (?P=name)
 
@@ -113,11 +113,11 @@ Presume following code applied
 
 \number
 
-*Need further check*
+*Supported in Pattern, not supported in repl*
 
 \A
 
-*Need further check*
+*Supported*
 
 \b
 
@@ -153,11 +153,7 @@ Presume following code applied
 
 \Z
 
-*Need further check*
-
-
-
-
+*Supported*
 
 *Note*
     

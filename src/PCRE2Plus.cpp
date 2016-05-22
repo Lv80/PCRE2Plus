@@ -154,7 +154,7 @@ std::shared_ptr<re::RegexObject> re::compile(const std::string & pattern, int fl
         PCRE2_ZERO_TERMINATED,
         flags,
         &re::lasterror,
-        &re::erroroffset,  //TODO: ERROR Position
+        &re::erroroffset,
         ccontext_8);
     if (ccontext_8 != re::ccontext_8){
         pcre2_compile_context_free_8(ccontext_8);
@@ -217,7 +217,55 @@ std::tuple<std::string, size_t> re::subn(const std::string & pattern, const std:
     return p_re->subn(repl, Str, count);
 }
 //------------------------------------------------------------------------------
-std::tuple<std::wstring, size_t> re::subn(const  std::wstring & pattern, const std::wstring & repl, const  std::wstring & Str, size_t count, int flags){
+std::tuple<std::string, size_t> re::subn(const std::string & pattern, std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count, int flags){
+    flags = flags | PCRE2_DUPNAMES;
+    std::shared_ptr <re::RegexObject> p_re;
+    if (re::usecache) {
+        if (re::Cache.find(std::make_pair(pattern, flags)) != re::Cache.end()){
+            p_re = re::Cache[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return std::make_tuple("", -1);
+            }
+            re::Cache[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return std::make_tuple("", -1);
+        }
+    }
+    return p_re->subn(userfun, Str, count);
+}
+//------------------------------------------------------------------------------
+std::tuple<std::wstring, size_t> re::subn(const std::wstring & pattern, std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count, int flags){
+    flags = flags | PCRE2_DUPNAMES;
+    std::shared_ptr <re::RegexObjectW> p_re;
+    if (re::usecache) {
+        if (re::CacheW.find(std::make_pair(pattern, flags)) != re::CacheW.end()){
+            p_re = re::CacheW[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return std::make_tuple(L"", -1);
+            }
+            re::CacheW[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return std::make_tuple(L"", -1);
+        }
+    }
+    return p_re->subn(userfun, Str, count);
+}
+//------------------------------------------------------------------------------
+std::tuple<std::wstring, size_t> re::subn(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count, int flags){
     flags = flags | PCRE2_DUPNAMES;
     std::shared_ptr <re::RegexObjectW> p_re;
     if (re::usecache) {
@@ -241,7 +289,55 @@ std::tuple<std::wstring, size_t> re::subn(const  std::wstring & pattern, const s
     return p_re->subn(repl, Str, count);
 }
 //------------------------------------------------------------------------------
-std::string re::sub(const  std::string & pattern, const  std::string & repl, const std::string & Str, size_t count, int flags){
+std::string re::sub(const std::string & pattern, std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count, int flags) {
+    flags = flags | PCRE2_DUPNAMES;
+    std::shared_ptr <re::RegexObject> p_re;
+    if (re::usecache){
+        if (re::Cache.find(std::make_pair(pattern, flags)) != re::Cache.end()){
+            p_re = re::Cache[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return "";
+            }
+            re::Cache[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return "";
+        }
+    }
+    return p_re->sub(userfun, Str, count);
+}
+//------------------------------------------------------------------------------
+std::wstring re::sub(const std::wstring & pattern, std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count, int flags) {
+    flags = flags | PCRE2_DUPNAMES;
+    std::shared_ptr <re::RegexObjectW> p_re;
+    if (re::usecache){
+        if (re::CacheW.find(std::make_pair(pattern, flags)) != re::CacheW.end()){
+            p_re = re::CacheW[std::make_pair(pattern, flags)];
+        }
+        else {
+            p_re = re::compile(pattern, flags);
+            if (!p_re){
+                return L"";
+            }
+            re::CacheW[std::make_pair(pattern, flags)] = p_re;
+        }
+    }
+    else{
+        p_re = re::compile(pattern, flags);
+        if (!p_re){
+            return L"";
+        }
+    }
+    return p_re->sub(userfun, Str, count);
+}
+//------------------------------------------------------------------------------
+std::string re::sub(const std::string & pattern, const std::string & repl, const std::string & Str, size_t count, int flags) {
     flags = flags | PCRE2_DUPNAMES;
     std::shared_ptr <re::RegexObject> p_re;
     if (re::usecache){
@@ -265,7 +361,7 @@ std::string re::sub(const  std::string & pattern, const  std::string & repl, con
     return p_re->sub(repl, Str, count);
 }
 //------------------------------------------------------------------------------
- std::wstring re::sub(const std::wstring & pattern, const  std::wstring & repl, const std::wstring & Str, size_t count, int flags){
+ std::wstring re::sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count, int flags) {
     flags = flags | PCRE2_DUPNAMES;
     std::shared_ptr <re::RegexObjectW> p_re;
     if (re::usecache){
@@ -835,10 +931,37 @@ std::vector<std::wstring> re::RegexObjectW::findall(const std::wstring & Str, si
     return v;
 }
 //------------------------------------------------------------------------------
-std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, const std::string & Str, size_t count){
-    if (this->m_pattern == ""){
-        return std::make_tuple(Str, -1);
+std::tuple<std::string, size_t> re::RegexObject::subn(std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count){
+    std::string Str1(Str);
+    int Offset = 0;
+    size_t Count = 0;
+    for (auto it = this->finditer(Str); !it->AtEnd(); ++*it.get()){
+        Count++;
+        auto S = it->Get()->m_groups[0];
+        auto E = it->Get()->m_groups[1];
+        std::string r = userfun(it->Get());
+        Str1.replace(S + Offset, E - S, r);
+        Offset += r.length() - (E - S);
     }
+    return std::make_tuple(Str1, Count);
+}
+//------------------------------------------------------------------------------
+std::tuple<std::wstring, size_t> re::RegexObjectW::subn(std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count){
+    std::wstring Str1(Str);
+    int Offset = 0;
+    size_t Count = 0;
+    for (auto it = this->finditer(Str); !it->AtEnd(); ++*it.get()){
+        Count++;
+        auto S = it->Get()->m_groups[0];
+        auto E = it->Get()->m_groups[1];
+        std::wstring r = userfun(it->Get());
+        Str1.replace(S + Offset, E - S, r);
+        Offset += r.length() - (E - S);
+    }
+    return std::make_tuple(Str1, Count);
+}
+//------------------------------------------------------------------------------
+std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, const std::string & Str, size_t count){
     if (!m_match_data){
         m_match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
     }
@@ -877,8 +1000,8 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
                 continue;
             }
             else{
-                re::lasterror = ret;
-                return std::make_tuple("", -1);
+                re::lasterror = ret;  //TODO: raise error later
+                return std::make_tuple(Str, 0);
             }
         }
         std::string r((char *)outputbuffer);
@@ -893,9 +1016,6 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
 }
 //------------------------------------------------------------------------------
 std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & repl, const std::wstring & Str, size_t count){
-    if (this->m_pattern == L""){
-        return std::make_tuple(Str, -1);
-    }
     if (!m_match_data){
         m_match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
     }
@@ -951,9 +1071,6 @@ std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & rep
 }
 //------------------------------------------------------------------------------
 std::string re::RegexObject::sub(const std::string & repl, const std::string & Str, size_t count){
-    if (this->m_pattern == ""){
-        return Str;
-    }
     if (!m_match_data){
         m_match_data = pcre2_match_data_create_from_pattern_8(m_re, NULL);
     }
@@ -1007,10 +1124,20 @@ std::string re::RegexObject::sub(const std::string & repl, const std::string & S
     return Str1;
 }
 //------------------------------------------------------------------------------
-std::wstring re::RegexObjectW::sub(const std::wstring & repl, const std::wstring & Str, size_t count){
-    if (this->m_pattern == L""){
-        return Str;
+std::string re::RegexObject::sub(std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count){
+    std::string Str1(Str);
+    int Offset = 0;
+    for (auto it = this->finditer(Str); !it->AtEnd(); ++*it.get()){
+        auto S = it->Get()->m_groups[0];
+        auto E = it->Get()->m_groups[1];
+        std::string r = userfun(it->Get());
+        Str1.replace(S + Offset, E - S, r);
+        Offset += r.length() - (E - S);
     }
+    return Str1;
+}
+//------------------------------------------------------------------------------
+std::wstring re::RegexObjectW::sub(const std::wstring & repl, const std::wstring & Str, size_t count){
     if (!m_match_data){
         m_match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
     }
@@ -1065,11 +1192,22 @@ std::wstring re::RegexObjectW::sub(const std::wstring & repl, const std::wstring
     return Str1;
 }
 //------------------------------------------------------------------------------
+std::wstring re::RegexObjectW::sub(std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count){
+    std::wstring Str1(Str);
+    int Offset = 0;
+    for (auto it = this->finditer(Str); !it->AtEnd(); ++*it.get()){
+
+        auto S = it->Get()->m_groups[0];
+        auto E = it->Get()->m_groups[1];
+        std::wstring r = userfun(it->Get());
+        Str1.replace(S + Offset, E - S, r);
+        Offset += r.length() - (E - S);
+    }
+    return Str1;
+}
+//------------------------------------------------------------------------------
 std::unique_ptr<re::MatchObject> re::RegexObject::search(const std::string & Str, size_t pos, int endpos){
     if (!m_re){
-        return nullptr;
-    }
-    if (this->m_pattern == ""){
         return nullptr;
     }
     if (!m_match_data){
@@ -1104,9 +1242,6 @@ std::unique_ptr<re::MatchObjectW> re::RegexObjectW::search(const std::wstring & 
     if (!m_re){
         return nullptr;
     }
-    if (this->m_pattern == L""){
-        return nullptr;
-    }
     if (!m_match_data){
         m_match_data = pcre2_match_data_create_from_pattern(m_re, NULL);
     }
@@ -1137,9 +1272,6 @@ std::unique_ptr<re::MatchObjectW> re::RegexObjectW::search(const std::wstring & 
 //------------------------------------------------------------------------------
 void re::RegexObject::search(std::unique_ptr<re::MatchObject> & M, const std::string & Str, size_t pos, int endpos){
     if (!m_re){
-        return;
-    }
-    if (this->m_pattern == ""){
         return;
     }
     if (!m_match_data){
@@ -1178,9 +1310,6 @@ void re::RegexObject::search(std::unique_ptr<re::MatchObject> & M, const std::st
 //------------------------------------------------------------------------------
 void re::RegexObjectW::search(std::unique_ptr<re::MatchObjectW> & M, const std::wstring & Str, size_t pos, int endpos){
     if (!m_re){
-        return;
-    }
-    if (this->m_pattern == L""){
         return;
     }
     if (!m_match_data){
@@ -1224,7 +1353,12 @@ m_endpos(endpos)
 {
     m_matchobj = m_regexobj->search(m_str, 0, endpos);
     if (m_matchobj){
-        m_pos = (int)m_matchobj->end(0);
+        if (m_pos == (int)m_matchobj->end(0)){
+            m_pos++;
+        }
+        else{
+            m_pos = (int)m_matchobj->end(0);
+        }
     }
 }
 //------------------------------------------------------------------------------
@@ -1235,7 +1369,12 @@ m_endpos(endpos)
 {
     m_matchobj = m_regexobj->search(m_str, 0);
     if (m_matchobj){
-        m_pos = (int)m_matchobj->end(0);
+        if (m_pos == (int)m_matchobj->end(0)){
+            m_pos++;
+        }
+        else{
+            m_pos = (int)m_matchobj->end(0);
+        }
     }
 }
 //------------------------------------------------------------------------------
@@ -1262,7 +1401,12 @@ std::unique_ptr<re::MatchObjectW> re::iterW::Get(){
 re::iter & re::iter::operator ++() {
     m_regexobj->search(m_matchobj, m_str, m_pos, m_endpos);
      if (m_matchobj){
-         m_pos = (int)m_matchobj->end(0);
+         if (m_pos == (int)m_matchobj->end(0)){
+             m_pos++;
+         }
+         else{
+             m_pos = (int)m_matchobj->end(0);
+         }
     }
     return * this;
 }
@@ -1270,7 +1414,12 @@ re::iter & re::iter::operator ++() {
 re::iterW & re::iterW::operator ++() {
      m_regexobj->search(m_matchobj, m_str, m_pos, m_endpos);
     if (m_matchobj){
-        m_pos = (int)m_matchobj->end(0);
+        if (m_pos == (int)m_matchobj->end(0)){
+            m_pos++;
+        }
+        else{
+            m_pos = (int)m_matchobj->end(0);
+        }
     }
     return * this;
 }

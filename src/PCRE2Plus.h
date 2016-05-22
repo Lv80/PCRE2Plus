@@ -71,10 +71,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory>
 #include <tuple>
 #include <map>
-
+#include <functional>
 namespace PCRE2Plus{
     //==========================================================================
-    class re{
+    class re {
     protected:
         inline static pcre2_compile_context_8 * CreateCContext_8(){
             pcre2_compile_context_8 * t = pcre2_compile_context_create_8(NULL);
@@ -126,10 +126,18 @@ namespace PCRE2Plus{
         static std::string sub(const std::string & pattern, const std::string & repl, const std::string && Str, size_t count = 0, int flags = 0) = delete;
         static std::wstring sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count = 0, int flags = 0);
         static std::wstring sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring && Str, size_t count = 0, int flags = 0) = delete;
+        static std::string sub(const std::string & pattern, std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count = 0, int flags = 0);
+        static std::string sub(const std::string & pattern, std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0, int flags = 0) = delete;
+        static std::wstring sub(const std::wstring & pattern, std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count = 0, int flags = 0);
+        static std::wstring sub(const std::wstring & pattern, std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0, int flags = 0) = delete;
         static std::tuple<std::string, size_t> subn(const std::string & pattern, const std::string & repl, const std::string & Str, size_t count = 0, int flags = 0);
         static std::tuple<std::string, size_t> subn(const std::string & pattern, const std::string & repl, const std::string && Str, size_t count = 0, int flags = 0) = delete;
         static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count = 0, int flags = 0);
         static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, const std::wstring & repl, const std::wstring && Str, size_t count = 0, int flags = 0) = delete;
+        static std::tuple<std::string, size_t> subn(const std::string & pattern, std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count = 0, int flags = 0);
+        static std::tuple<std::string, size_t> subn(const std::string & pattern, std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0, int flags = 0) = delete;
+        static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count = 0, int flags = 0);
+        static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0, int flags = 0) = delete;
         static std::string escape(const std::string & unquoted);
         static std::wstring escape(const std::wstring & unquoted);
         static int getlasterror();
@@ -160,8 +168,8 @@ namespace PCRE2Plus{
             std::string group(std::string name);
             size_t pos();
             size_t endpos();
-            size_t start(size_t i);
-            size_t end(size_t i);
+            size_t start(size_t i = 0);
+            size_t end(size_t i = 0);
             std::vector<std::string> groups();
             std::string string();
             size_t lastindex();
@@ -201,8 +209,12 @@ namespace PCRE2Plus{
             std::unique_ptr<re::iter> finditer(const std::string && Str, size_t pos = 0, int endpos = -1) = delete;
             std::string sub(const std::string & repl, const std::string & Str, size_t count = 0);
             std::string sub(const std::string & repl, const std::string && Str, size_t count = 0) = delete;
+            std::string sub(std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count = 0);
+            std::string sub(std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0) = delete;
             std::tuple<std::string, size_t> subn(const std::string & repl, const std::string & Str, size_t count = 0);
             std::tuple<std::string, size_t> subn(const std::string & repl, const std::string && Str, size_t count = 0) = delete;
+            std::tuple<std::string, size_t> subn(std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count = 0);
+            std::tuple<std::string, size_t> subn(std::function<std::string(const std::unique_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0) = delete;
 
         };
         //======================================================================
@@ -232,8 +244,8 @@ namespace PCRE2Plus{
             std::wstring group(std::wstring name);
             size_t pos();
             size_t endpos();
-            size_t start(size_t i);
-            size_t end(size_t i);
+            size_t start(size_t i = 0);
+            size_t end(size_t i = 0);
             std::vector<std::wstring> groups();
             std::wstring string();
             size_t lastindex();
@@ -273,8 +285,12 @@ namespace PCRE2Plus{
             std::unique_ptr<re::iterW> finditer(const  std::wstring && Str, size_t pos = 0, int endpos = -1) = delete;
             std::wstring sub(const  std::wstring & repl, const  std::wstring & Str, size_t count = 0);
             std::wstring sub(const  std::wstring & repl, const  std::wstring && Str, size_t count = 0) = delete;
+            std::wstring sub(std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count = 0);
+            std::wstring sub(std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0) = delete;
             std::tuple<std::wstring, size_t> subn(const std::wstring & repl, const std::wstring & Str, size_t count = 0);
             std::tuple<std::wstring, size_t> subn(const std::wstring & repl, const std::wstring && Str, size_t count = 0) = delete;
+            std::tuple<std::wstring, size_t> subn(std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count = 0);
+            std::tuple<std::wstring, size_t> subn(std::function<std::wstring(const std::unique_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0) = delete;
         };
         //======================================================================
         class iterW{

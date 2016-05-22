@@ -19,10 +19,10 @@ For Example:
 Following code will fail, you may got compiler error:
 error C2280: 'std::vector<std::string,std::allocator<_Ty>> PCRE2Plus::re::findall(const std::string &,const std::string &&,size_t,int)' : attempting to reference a deleted function
 
+
 ```c++
 
-    std::string STR = "abc def hig";
-    auto v = re::findall(R"(.+)", STR);
+    auto v = re::findall(R"(.+)", "abc def hig");
 
 ```
 
@@ -35,6 +35,42 @@ The code **must** be changed to following
 
 ```
 
+III. Result of subn has been corrected, it's the same as python specification now
+
+IV. Replace with callback user function is now supported
+
+For Example
+
+```c++
+
+    std::string STR("ABC def ggg");
+    auto out = re::subn(R"(\w)",[=](const std::unique_ptr<re::MatchObject> & M){return M->group().append("X1"); }, STR);
+    PRINTLN(std::to_string(re::getlasterror()));
+    PRINTLN(re::getlasterrorstr());
+    PRINTLN(std::get<0>(out));
+    PRINTLN(std::to_string(std::get<1>(out)));
+
+```
+
+Due to this change
+Following code must changed due to overload function confusing
+
+From:
+
+```c++
+
+    re::subn(R"(\w)", "Y1", STR);
+
+
+```
+
+To:
+
+```c++
+
+    re::subn(R"(\w)", std::string("Y1"), STR);
+
+```
 
 ##Description
 
@@ -128,6 +164,8 @@ There is a cache mechanism in the module now.
 
 when then cache is enabled (**re::usecache = true;**) following function will cache the regex object:
 
+```c++
+
     re::search, 
     re::split
     re::findall
@@ -135,10 +173,14 @@ when then cache is enabled (**re::usecache = true;**) following function will ca
     re::sub
     re::subn
 
+```
+
 In this case you don't necessary to generated a re object in loops:
 e.g 
 
 Before:
+
+```c++
 
     std::vector<std::string> Lines;
     Lines = ... //pushing some data
@@ -148,7 +190,11 @@ Before:
         }
     }
 
+```
+
 is slow than
+
+```c++
 
     std::vector<std::string> Lines;
     auto R = re::compile("blabla");
@@ -159,17 +205,27 @@ is slow than
         }
     }
 
+```
+
 After using Cache:
 
+```c++
+
     re::usecache = true;
+
+```
 
 The performance shall be very close.
 
 Other cache functions:
 
+```c++
+
     re::getcachesize() // Get Cache Count
 
     re::purgecache()  // Purge Cache
+
+```
 
 **NOTE**
 
@@ -311,7 +367,17 @@ Unix Line ending
 
 ## License
 
-**BSD**
+
+PCRE2PLUS is PCRE2 Wrapper (Using PYTHON style)
+
+Written By Boying Xu
+
+If you want to see the original PCRE2 License
+
+Please check [here](LICENSE.PCRE2)
+
+THE "BSD" LICENSE
+-----------------
 
 >    Copyright (c) 2016, Boying Xu
 >    All rights reserved.
