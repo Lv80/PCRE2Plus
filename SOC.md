@@ -285,9 +285,9 @@ Error Handling: pattern only
 
 *Supported*
 
-static std::unique_ptr<re::iter> re::finditer(const std::string & pattern, const std::string & Str, int flags = 0)
+static re::InputIterator re::finditer(const std::string & pattern, const std::string & Str, int flags = 0)
 
-static std::unique_ptr<re::iterW> re::finditer(const std::wstring & pattern, const std::wstring & Str, int flags = 0)
+static re::InputIteratorW re::finditer(const std::wstring & pattern, const std::wstring & Str, int flags = 0)
 
 Error Handling: pattern only
 
@@ -296,8 +296,8 @@ Example:
 ```C++
 
     std::string STR = "abc def ghi";
-    for (auto x = re::finditer(R"(\w+)", STR); !x->AtEnd(); x->Next()){
-        std::cout << x->Get()->group(0) << std::endl;
+    for (auto x = re::finditer(R"(\w+)", STR); *x; ++x){
+        std::cout << x->group(0) << std::endl;
     }
 
 ```
@@ -396,9 +396,9 @@ Error Handling: No
 
 *Supported*
 
-std::unique_ptr<re::iter> finditer(const std::string & Str, size_t pos = 0, int endpos = -1);
+re::InputIterator finditer(const std::string & Str, size_t pos = 0, int endpos = -1);
 
-std::unique_ptr<re::iterW> finditer(const  std::wstring & Str, size_t pos = 0, int endpos = -1)
+re::InputIteratorW finditer(const  std::wstring & Str, size_t pos = 0, int endpos = -1)
 
 Error Handling: No
 

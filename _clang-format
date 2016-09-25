@@ -1,0 +1,32 @@
+# http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+---
+BasedOnStyle                                   : "LLVM"
+UseTab                                         : Never
+IndentWidth                                    : 4
+AccessModifierOffset                           : 0
+AlignAfterOpenBracket                          : Align
+AlignConsecutiveAssignments                    : true
+AlignConsecutiveDeclarations                   : true
+PointerAlignment                               : Middle
+AllowShortBlocksOnASingleLine                  : false
+AllowShortIfStatementsOnASingleLine            : false
+AllowShortLoopsOnASingleLine                   : false
+ColumnLimit                                    : 0
+KeepEmptyLinesAtTheStartOfBlocks               : false
+Cpp11BracedListStyle                           : true
+ConstructorInitializerAllOnOneLineOrOnePerLine : false
+BreakBeforeBraces                              : Custom
+BraceWrapping:   
+  AfterClass                                   : false
+  AfterControlStatement                        : false
+  AfterEnum                                    : false
+  AfterFunction                                : false
+  AfterNamespace                               : false
+  AfterObjCDeclaration                         : false
+  AfterStruct                                  : false
+  AfterUnion                                   : false
+  BeforeCatch                                  : false
+  BeforeElse                                   : true
+Standard                                       : Cpp11
+SpaceAfterCStyleCast                           : true
+SortIncludes                                   : false

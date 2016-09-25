@@ -12,12 +12,14 @@
 I. Build option -DHEAP_MATCH_RECURSE=1 add in win32 build bat file to avoid stack overflow issue in long string. No suggestion to change on Linux build script yet(will be done later)
 
 
-II. No longer allows to put string directly to search function as PCRE2Plus was facing a performance issue in finditer function, in the past we copy string in each search function which is really slow, no we use string reference. This is the same behavior as std::regex
+II. By default, no longer allows to put string directly to search function as PCRE2Plus was facing a performance issue in finditer function, in the past we copy string in each search function which is really slow, no we use string reference. This is the same behavior as std::regex
 
 For Example:
 
 Following code will fail, you may got compiler error:
 error C2280: 'std::vector<std::string,std::allocator<_Ty>> PCRE2Plus::re::findall(const std::string &,const std::string &&,size_t,int)' : attempting to reference a deleted function
+
+
 
 
 ```c++
@@ -28,12 +30,22 @@ error C2280: 'std::vector<std::string,std::allocator<_Ty>> PCRE2Plus::re::findal
 
 The code **must** be changed to following
 
+
 ```c++
 
     std::string STR = "abc def hig";
     auto v = re::findall(R"(.+)", STR);
 
 ```
+
+Option to disable it:
+
+```c++
+
+    #define PCRE2PLUS_NODELETE
+
+```
+
 
 III. Result of subn has been corrected, it's the same as python specification now
 
@@ -44,7 +56,7 @@ For Example
 ```c++
 
     std::string STR("ABC def ggg");
-    auto out = re::subn(R"(\w)",[=](const std::unique_ptr<re::MatchObject> & M){return M->group().append("X1"); }, STR);
+    auto out = re::subn(R"(\w)",[=](const re::M_PT M){return M->group().append("X1"); }, STR);
     PRINTLN(std::to_string(re::getlasterror()));
     PRINTLN(re::getlasterrorstr());
     PRINTLN(std::get<0>(out));
@@ -352,18 +364,14 @@ For details see [State of compliance for python re document](SOC.md) document
 ##Known Issues
 The current phase of this project is to support basic function and handle unicode texts properly
 
-some functions related to the position are not fully tested(although a few other functions are depend on them and works)
-
-Function call in re.sub is not supported
+Some functions related to the position are not fully tested(although a few other functions are depend on them and works)
 
 ##Developer
 API: [http://www.pcre.org/current/doc/html/pcre2api.html](http://www.pcre.org/current/doc/html/pcre2api.html)
 
 Coding style for PCRE2Plus:
 
-tab => 4 spaces
-
-Unix Line ending
+refer to [clang format](_clang-format)
 
 ## License
 

@@ -150,24 +150,24 @@ int main(int argc, char* argv[]) {
     print_header("Test re::finditer");
     {
         std::string STR = "111A222B333C";
-        for (auto x = re::finditer(R"([A-Z])", STR); !x->AtEnd(); x->Next()){
-            PRINTLN(std::to_string(x->Get()->start()) + " " + std::to_string(x->Get()->end()) + " " + x->Get()->group());
+        for (auto x = re::finditer(R"([A-Z])", STR); *x; ++x){
+            PRINTLN(std::to_string(x->start()) + " " + std::to_string(x->end()) + " " + x->group());
         }
     }
     //--------------------------------------------------------------------------
     print_header("Test re::finditer 2");
     {
         std::string STR = "ABC def ggg";
-        for (auto x = re::finditer("", STR); !x->AtEnd(); x->Next()){
-            PRINTLN(std::to_string(x->Get()->start()) +" " + std::to_string(x->Get()->end())+ " " + x->Get()->group());
+        for (auto x = re::finditer("", STR); *x; ++x){
+            PRINTLN(std::to_string(x->start()) +" " + std::to_string(x->end())+ " " + x->group());
         }
     }
     //--------------------------------------------------------------------------
     print_header("Test re::finditer 3");
     {
         std::string STR = "abc def ghi";
-        for (auto x = re::finditer(R"(\w+)", STR); !x->AtEnd(); x->Next()){
-            PRINTLN(std::to_string(x->Get()->start()) + " " + std::to_string(x->Get()->end()) + " " + x->Get()->group());
+        for (auto x = re::finditer(R"(\w+)", STR); *x; x++){
+            PRINTLN(std::to_string(x->start()) + " " + std::to_string(x->end()) + " " + x->group());
         }
     }
     //--------------------------------------------------------------------------
@@ -290,7 +290,7 @@ int main(int argc, char* argv[]) {
     print_header("Test subn (function)");
     {
         std::string STR("ABC def ggg");
-        auto out = re::subn(R"(\w)",[=](const std::unique_ptr<re::MatchObject> & M){return M->group().append("X1"); }, STR);
+        auto out = re::subn(R"(\w)",[=](const re::M_PT M){return M->group().append("X1"); }, STR);
         PRINTLN(std::to_string(re::getlasterror()));
         PRINTLN(re::getlasterrorstr());
         PRINTLN(std::get<0>(out));
@@ -312,7 +312,7 @@ int main(int argc, char* argv[]) {
     {
         std::wstring STR(L"张三李四");
         auto R = re::compile(LR"(\w)");
-        auto out = R->sub([=](const std::unique_ptr<re::MatchObjectW> & M){return M->group().append(L"1"); }, STR);
+        auto out = R->sub([=](const std::shared_ptr<re::MatchObjectW> & M){return M->group().append(L"1"); }, STR);
         PRINTLN(std::to_string(re::getlasterror()));
         PRINTLN(re::getlasterrorstr());
         PRINTLN(out);
