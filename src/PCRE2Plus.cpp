@@ -966,9 +966,7 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
     PCRE2_UCHAR8 * outputbuffer = nullptr;
     PCRE2_SIZE     outlength    = Str1.length() * 2;
     PCRE2_SIZE *   p_outlength  = &outlength;
-    int            c            = 0;
-    size_t         i            = 0;
-    while (i <= count) {
+    while (count == 0) {
         outputbuffer = (PCRE2_UCHAR8 *) malloc(sizeof(PCRE2_UCHAR8 *) * outlength);
         int ret      = pcre2_substitute_8(
             (pcre2_code_8 *) m_re,
@@ -993,7 +991,7 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
             }
             else {
                 re::lasterror = ret; //TODO: raise error later
-                return std::make_tuple(Str, 0);
+                return std::make_tuple(Str, -1);
             }
         }
         std::string r((char *) outputbuffer);
@@ -1001,8 +999,19 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
         Str1 = r;
         free(outputbuffer);
         outputbuffer = nullptr;
-        c += ret;
-        i++;
+        return std::make_tuple(Str1, ret);
+    }
+    int    Offset = 0;
+    size_t c      = 0;
+    for (auto it = this->finditer(Str); *it; ++it) {
+        auto S = it->m_groups[0];
+        auto E = it->m_groups[1];
+        Str1.replace(S + Offset, E - S, repl);
+        Offset += repl.length() - (E - S);
+        c++;
+        if (c >= count) {
+            break;
+        }
     }
     return std::make_tuple(Str1, c);
 }
@@ -1020,9 +1029,7 @@ std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & rep
     PCRE2_SIZE    outlength    = Str1.length() * 2;
     PCRE2_SIZE *  p_outlength  = &outlength;
 
-    int    c = 0;
-    size_t i = 0;
-    while (i <= count) {
+    while (count == 0) {
         outputbuffer = (PCRE2_UCHAR *) malloc(sizeof(PCRE2_UCHAR *) * outlength);
         int ret      = pcre2_substitute(
             (pcre2_code *) m_re,
@@ -1055,8 +1062,19 @@ std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & rep
         Str1 = r;
         free(outputbuffer);
         outputbuffer = nullptr;
-        c += ret;
-        i++;
+        return std::make_tuple(Str1, ret);
+    }
+    int    Offset = 0;
+    size_t c      = 0;
+    for (auto it = this->finditer(Str); *it; ++it) {
+        auto S = it->m_groups[0];
+        auto E = it->m_groups[1];
+        Str1.replace(S + Offset, E - S, repl);
+        Offset += repl.length() - (E - S);
+        c++;
+        if (c >= count) {
+            break;
+        }
     }
     return std::make_tuple(Str1, c);
 }
@@ -1073,9 +1091,7 @@ std::string re::RegexObject::sub(const std::string & repl, const std::string & S
     PCRE2_UCHAR8 * outputbuffer = nullptr;
     PCRE2_SIZE     outlength    = Str1.length() * 2;
     PCRE2_SIZE *   p_outlength  = &outlength;
-    int            c            = 0;
-    size_t         i            = 0;
-    while (i <= count) {
+    while (count == 0) {
         outputbuffer = (PCRE2_UCHAR8 *) malloc(sizeof(PCRE2_UCHAR8 *) * outlength);
         int ret      = pcre2_substitute_8(
             (pcre2_code_8 *) m_re,
@@ -1108,13 +1124,25 @@ std::string re::RegexObject::sub(const std::string & repl, const std::string & S
         Str1 = r;
         free(outputbuffer);
         outputbuffer = nullptr;
-        c += ret;
-        i++;
+        return Str1;
+    }
+    int    Offset = 0;
+    size_t c      = 0;
+    for (auto it = this->finditer(Str); *it; ++it) {
+        auto S = it->m_groups[0];
+        auto E = it->m_groups[1];
+        Str1.replace(S + Offset, E - S, repl);
+        Offset += repl.length() - (E - S);
+        c++;
+        if (c >= count) {
+            break;
+        }
     }
     return Str1;
 }
 //------------------------------------------------------------------------------
 std::string re::RegexObject::sub(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count) {
+    //FIXME: count not used
     std::string Str1(Str);
     int         Offset = 0;
     for (auto it = this->finditer(Str); *it; ++it) {
@@ -1140,9 +1168,7 @@ std::wstring re::RegexObjectW::sub(const std::wstring & repl, const std::wstring
     PCRE2_SIZE    outlength    = Str1.length() * 2;
     PCRE2_SIZE *  p_outlength  = &outlength;
 
-    int    c = 0;
-    size_t i = 0;
-    while (i <= count) {
+    while (count == 0) {
         outputbuffer = (PCRE2_UCHAR *) malloc(sizeof(PCRE2_UCHAR *) * outlength);
         int ret      = pcre2_substitute(
             (pcre2_code *) m_re,
@@ -1175,13 +1201,25 @@ std::wstring re::RegexObjectW::sub(const std::wstring & repl, const std::wstring
         Str1 = r;
         free(outputbuffer);
         outputbuffer = nullptr;
-        c += ret;
-        i++;
+        return Str1;
+    }
+    int    Offset = 0;
+    size_t c      = 0;
+    for (auto it = this->finditer(Str); *it; ++it) {
+        auto S = it->m_groups[0];
+        auto E = it->m_groups[1];
+        Str1.replace(S + Offset, E - S, repl);
+        Offset += repl.length() - (E - S);
+        c++;
+        if (c >= count) {
+            break;
+        }
     }
     return Str1;
 }
 //------------------------------------------------------------------------------
 std::wstring re::RegexObjectW::sub(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count) {
+    //FIXME: count not used
     std::wstring Str1(Str);
     int          Offset = 0;
     for (auto it = this->finditer(Str); *it; ++it) {

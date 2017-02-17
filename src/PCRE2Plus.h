@@ -245,35 +245,35 @@ class re {
 #endif
     static std::string sub(const std::string & pattern, const std::string & repl, const std::string & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
 #if !defined(PCRE2PLUS_NODELETE)
-    static std::string sub(const std::string & pattern, const std::string & repl, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
+    //static std::string sub(const std::string & pattern, const std::string & repl, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
 #endif
     static std::wstring sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
 #if !defined(PCRE2PLUS_NODELETE)
-    static std::wstring sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
+    //static std::wstring sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
 #endif
     static std::string sub(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
 #if !defined(PCRE2PLUS_NODELETE)
-    static std::string sub(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
+    //static std::string sub(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
 #endif
     static std::wstring sub(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
 #if !defined(PCRE2PLUS_NODELETE)
-    static std::wstring sub(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
+    //static std::wstring sub(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
 #endif
     static std::tuple<std::string, size_t> subn(const std::string & pattern, const std::string & repl, const std::string & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
 #if !defined(PCRE2PLUS_NODELETE)
-    static std::tuple<std::string, size_t> subn(const std::string & pattern, const std::string & repl, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
+    //static std::tuple<std::string, size_t> subn(const std::string & pattern, const std::string & repl, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
 #endif
     static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
 #if !defined(PCRE2PLUS_NODELETE)
-    static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, const std::wstring & repl, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
+    //static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, const std::wstring & repl, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
 #endif
     static std::tuple<std::string, size_t> subn(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
 #if !defined(PCRE2PLUS_NODELETE)
-    static std::tuple<std::string, size_t> subn(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
+    //static std::tuple<std::string, size_t> subn(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
 #endif
     static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
 #if !defined(PCRE2PLUS_NODELETE)
-    static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
+    //static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
 #endif
     static std::string escape(const std::string & unquoted);
     static std::wstring escape(const std::wstring & unquoted);
@@ -341,19 +341,19 @@ class re {
 #endif
         std::string sub(const std::string & repl, const std::string & Str, size_t count = 0);
 #if !defined(PCRE2PLUS_NODELETE)
-        std::string sub(const std::string & repl, const std::string && Str, size_t count = 0) = delete;
+        //std::string sub(const std::string & repl, const std::string && Str, size_t count = 0) = delete;
 #endif
         std::string sub(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count = 0);
 #if !defined(PCRE2PLUS_NODELETE)
-        std::string sub(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0) = delete;
+        //std::string sub(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0) = delete;
 #endif
         std::tuple<std::string, size_t> subn(const std::string & repl, const std::string & Str, size_t count = 0);
 #if !defined(PCRE2PLUS_NODELETE)
-        std::tuple<std::string, size_t> subn(const std::string & repl, const std::string && Str, size_t count = 0) = delete;
+        //std::tuple<std::string, size_t> subn(const std::string & repl, const std::string && Str, size_t count = 0) = delete;
 #endif
         std::tuple<std::string, size_t> subn(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count = 0);
 #if !defined(PCRE2PLUS_NODELETE)
-        std::tuple<std::string, size_t> subn(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0) = delete;
+        //std::tuple<std::string, size_t> subn(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0) = delete;
 #endif
     };
     //==========================================================================
@@ -435,19 +435,19 @@ class re {
 #endif
         std::wstring sub(const std::wstring & repl, const std::wstring & Str, size_t count = 0);
 #if !defined(PCRE2PLUS_NODELETE)
-        std::wstring sub(const std::wstring & repl, const std::wstring && Str, size_t count = 0) = delete;
+        //std::wstring sub(const std::wstring & repl, const std::wstring && Str, size_t count = 0) = delete;
 #endif
         std::wstring sub(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count = 0);
 #if !defined(PCRE2PLUS_NODELETE)
-        std::wstring sub(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0) = delete;
+        //std::wstring sub(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0) = delete;
 #endif
         std::tuple<std::wstring, size_t> subn(const std::wstring & repl, const std::wstring & Str, size_t count = 0);
 #if !defined(PCRE2PLUS_NODELETE)
-        std::tuple<std::wstring, size_t> subn(const std::wstring & repl, const std::wstring && Str, size_t count = 0) = delete;
+        //std::tuple<std::wstring, size_t> subn(const std::wstring & repl, const std::wstring && Str, size_t count = 0) = delete;
 #endif
         std::tuple<std::wstring, size_t> subn(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count = 0);
 #if !defined(PCRE2PLUS_NODELETE)
-        std::tuple<std::wstring, size_t> subn(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0) = delete;
+        //std::tuple<std::wstring, size_t> subn(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0) = delete;
 #endif
     };
     //==========================================================================
