@@ -981,7 +981,9 @@ std::tuple<std::string, size_t> re::RegexObject::subn(const std::string & repl, 
             (PCRE2_UCHAR8 *) outputbuffer,
             p_outlength);
         if (ret == 0) {
-            break;
+            free(outputbuffer);
+            outputbuffer = nullptr;
+            return std::make_tuple(Str1, 0);
         }
         if (ret < 0) {
             if (ret == PCRE2_ERROR_NOMEMORY) {
@@ -1044,7 +1046,9 @@ std::tuple<std::wstring, size_t> re::RegexObjectW::subn(const std::wstring & rep
             (PCRE2_UCHAR *) outputbuffer,
             p_outlength);
         if (ret == 0) {
-            break;
+            free(outputbuffer);
+            outputbuffer = nullptr;
+            return std::make_tuple(Str1, 0);
         }
         if (ret < 0) {
             if (ret == PCRE2_ERROR_NOMEMORY) {
@@ -1106,7 +1110,9 @@ std::string re::RegexObject::sub(const std::string & repl, const std::string & S
             (PCRE2_UCHAR8 *) outputbuffer,
             p_outlength);
         if (ret == 0) {
-            break;
+            free(outputbuffer);
+            outputbuffer = nullptr;
+            return Str1;
         }
         if (ret < 0) {
             if (ret == PCRE2_ERROR_NOMEMORY) {
@@ -1183,7 +1189,9 @@ std::wstring re::RegexObjectW::sub(const std::wstring & repl, const std::wstring
             (PCRE2_UCHAR *) outputbuffer,
             p_outlength);
         if (ret == 0) {
-            break;
+            free(outputbuffer);
+            outputbuffer = nullptr;
+            return Str1;
         }
         if (ret < 0) {
             if (ret == PCRE2_ERROR_NOMEMORY) {

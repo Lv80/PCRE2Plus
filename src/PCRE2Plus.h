@@ -75,7 +75,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #define PCRE2_STATIC 1
-#include <pcre2.h>
+#include "pcre2.h"
 #include <string>
 #include <vector>
 #include <memory>
