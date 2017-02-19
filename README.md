@@ -9,48 +9,15 @@
 
 ##Recent Change
 
-I. Build option -DHEAP_MATCH_RECURSE=1 add in win32 build bat file to avoid stack overflow issue in long string. No suggestion to change on Linux build script yet(will be done later)
+I. Since 19/Feb in 2017, it's OK to pass string or str_ptr(temp) to the function, unlike std::regex, the original string will be hold by a shared_ptr. 
 
+II Since 19/Feb 2017 [gtest](https://github.com/google/googletest "gtest") is used as unit_test framework.
 
-II. By default, no longer allows to put string directly to search function as PCRE2Plus was facing a performance issue in finditer function, in the past we copy string in each search function which is really slow, no we use string reference. This is the same behavior as std::regex
+##Old changes
 
-For Example:
+I. Since long time beforeResult of subn has been corrected, it's the same as python specification now
 
-Following code will fail, you may got compiler error:
-error C2280: 'std::vector<std::string,std::allocator<_Ty>> PCRE2Plus::re::findall(const std::string &,const std::string &&,size_t,int)' : attempting to reference a deleted function
-
-
-III. Add unit_test. Using [gtest](https://github.com/google/googletest "gtest") as test framework
-
-
-```c++
-
-    auto v = re::findall(R"(.+)", "abc def hig");
-
-```
-
-The code **must** be changed to following
-
-
-```c++
-
-    std::string STR = "abc def hig";
-    auto v = re::findall(R"(.+)", STR);
-
-```
-
-Option to disable it:
-
-```c++
-
-    #define PCRE2PLUS_NODELETE
-
-```
-
-
-III. Result of subn has been corrected, it's the same as python specification now
-
-IV. Replace with callback user function is now supported
+II. Replace with callback user function is now supported
 
 For Example
 
@@ -66,7 +33,7 @@ For Example
 ```
 
 Due to this change
-Following code must changed due to overload function confusing
+Following code may needed to be changed due to overload function confusing (Only limited in VC++2013?)
 
 From:
 
@@ -84,6 +51,8 @@ To:
     re::subn(R"(\w)", std::string("Y1"), STR);
 
 ```
+
+
 
 ##Description
 
@@ -103,6 +72,8 @@ Homepage and Download: [http://www.pcre.org/](http://www.pcre.org/)
 
 Alternately, pcre2-10.21 is cached in this repo: [pcre-2-10.21.zip](3PP/pcre2-10.21.zip)
 
+
+Note: Build option -DHEAP_MATCH_RECURSE=1 add in win32 build bat file to avoid stack overflow issue in long string. No suggestion to change on Linux build script yet(will be done later)
 
 ###Install on Windows (VC++)
 

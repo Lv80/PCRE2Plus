@@ -36,6 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define __STR1__(x) __STR2__(x)
 #define __LOC__ __FILE__ "("__STR1__(__LINE__) ") : Warning Msg: "
 
+
 #if defined(PCRE2PLUS_NODELETE)
 #pragma message(__LOC__ "No delete function now, be careful")
 #endif
@@ -212,69 +213,21 @@ class re {
     static std::shared_ptr<re::RegexObject> compile(const std::string & pattern, REFLAGS flags = FLAGNONE);
     static std::shared_ptr<re::RegexObjectW> compile(const std::wstring & pattern, REFLAGS flags = FLAGNONE);
     static std::shared_ptr<re::MatchObject> search(const std::string & pattern, const std::string & Str, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    static std::shared_ptr<re::MatchObject> search(const std::string & pattern, const std::string && Str, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::shared_ptr<re::MatchObjectW> search(const std::wstring & pattern, const std::wstring & Str, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    static std::shared_ptr<re::MatchObjectW> search(const std::wstring & pattern, const std::wstring && Str, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::vector<std::string> split(const std::string & pattern, const std::string & Str, size_t maxsplit = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    static std::vector<std::string> split(const std::string & pattern, const std::string && Str, size_t maxsplit = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::vector<std::wstring> split(const std::wstring & pattern, const std::wstring & Str, size_t maxsplit = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    static std::vector<std::wstring> split(const std::wstring & pattern, const std::wstring && Str, size_t maxsplit = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::vector<std::string> findall(const std::string & pattern, const std::string & Str, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    static std::vector<std::string> findall(const std::string & pattern, const std::string && Str, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::vector<std::wstring> findall(const std::wstring & pattern, const std::wstring & Str, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    static std::vector<std::wstring> findall(const std::wstring & pattern, const std::wstring && Str, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static InputIterator finditer(const std::string & pattern, const std::string & Str, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    static InputIterator finditer(const std::string & pattern, const std::string && Str, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static InputIteratorW finditer(const std::wstring & pattern, const std::wstring & Str, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    static InputIteratorW finditer(const std::wstring & pattern, const std::wstring && Str, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::string sub(const std::string & pattern, const std::string & repl, const std::string & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    //static std::string sub(const std::string & pattern, const std::string & repl, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::wstring sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    //static std::wstring sub(const std::wstring & pattern, const std::wstring & repl, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::string sub(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    //static std::string sub(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::wstring sub(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    //static std::wstring sub(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::tuple<std::string, size_t> subn(const std::string & pattern, const std::string & repl, const std::string & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    //static std::tuple<std::string, size_t> subn(const std::string & pattern, const std::string & repl, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, const std::wstring & repl, const std::wstring & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    //static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, const std::wstring & repl, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::tuple<std::string, size_t> subn(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    //static std::tuple<std::string, size_t> subn(const std::string & pattern, std::function<std::string(const std::shared_ptr<re::MatchObject>)> userfun, const std::string && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring & Str, size_t count = 0, REFLAGS flags = FLAGNONE);
-#if !defined(PCRE2PLUS_NODELETE)
-    //static std::tuple<std::wstring, size_t> subn(const std::wstring & pattern, std::function<std::wstring(const std::shared_ptr<re::MatchObjectW>)> userfun, const std::wstring && Str, size_t count = 0, REFLAGS flags = FLAGNONE) = delete;
-#endif
     static std::string escape(const std::string & unquoted);
     static std::wstring escape(const std::wstring & unquoted);
     static int         getlasterror();
@@ -284,7 +237,7 @@ class re {
     //==========================================================================
     class MatchObject {
         public:
-        MatchObject(std::shared_ptr<RegexObject> re, const std::string & Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos);
+        MatchObject(std::shared_ptr<RegexObject> re, std::shared_ptr<std::string> Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos);
         std::string group(size_t i);
         std::string group();
         std::string group(std::string name);
@@ -293,7 +246,7 @@ class re {
         size_t start(size_t i = 0);
         size_t end(size_t i = 0);
         std::vector<std::string> groups();
-        std::string              string();
+        const std::string &      string();
         size_t                   lastindex();
         std::vector<int> span(size_t i);
         std::shared_ptr<RegexObject> re();
@@ -301,7 +254,7 @@ class re {
 
         protected:
         std::shared_ptr<RegexObject> m_re;
-        const std::string &          m_str;
+        std::shared_ptr<std::string> m_str;
         size_t                       m_pos;
         size_t                       m_endpos;
         std::vector<size_t>          m_groups;
@@ -324,37 +277,15 @@ class re {
         REFLAGS                          flags();
         std::string                      pattern();
         std::shared_ptr<re::MatchObject> search(const std::string & Str, size_t pos = 0, int endpos = -1);
-#if !defined(PCRE2PLUS_NODELETE)
-        std::shared_ptr<re::MatchObject> search(const std::string && Str, size_t pos = 0, int endpos = -1) = delete;
-#endif
+
         std::vector<std::string> split(const std::string & Str, size_t maxsplit = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        std::vector<std::string> split(const std::string && Str, size_t maxsplit = 0) = delete;
-#endif
         std::vector<std::string> findall(const std::string & Str, size_t pos = 0, int endpos = -1);
-#if !defined(PCRE2PLUS_NODELETE)
-        std::vector<std::string> findall(const std::string && Str, size_t pos = 0, int endpos = -1) = delete;
-#endif
+
         InputIterator finditer(const std::string & Str, size_t pos = 0, int endpos = -1);
-#if !defined(PCRE2PLUS_NODELETE)
-        InputIterator finditer(const std::string && Str, size_t pos = 0, int endpos = -1) = delete;
-#endif
         std::string sub(const std::string & repl, const std::string & Str, size_t count = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        //std::string sub(const std::string & repl, const std::string && Str, size_t count = 0) = delete;
-#endif
         std::string sub(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        //std::string sub(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0) = delete;
-#endif
         std::tuple<std::string, size_t> subn(const std::string & repl, const std::string & Str, size_t count = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        //std::tuple<std::string, size_t> subn(const std::string & repl, const std::string && Str, size_t count = 0) = delete;
-#endif
         std::tuple<std::string, size_t> subn(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        //std::tuple<std::string, size_t> subn(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string && Str, size_t count = 0) = delete;
-#endif
     };
     //==========================================================================
     class iter {
@@ -378,7 +309,7 @@ class re {
 
     class MatchObjectW {
         public:
-        MatchObjectW(std::shared_ptr<RegexObjectW> re, const std::wstring & Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos);
+        MatchObjectW(std::shared_ptr<RegexObjectW> re, std::shared_ptr<std::wstring> Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos);
         std::wstring group(size_t i);
         std::wstring group();
         std::wstring group(std::wstring name);
@@ -387,7 +318,7 @@ class re {
         size_t start(size_t i = 0);
         size_t end(size_t i = 0);
         std::vector<std::wstring> groups();
-        std::wstring              string();
+        const std::wstring &      string();
         size_t                    lastindex();
         std::vector<int> span(size_t i);
         std::shared_ptr<RegexObjectW> re();
@@ -395,7 +326,7 @@ class re {
 
         protected:
         std::shared_ptr<RegexObjectW> m_re;
-        const std::wstring &          m_str;
+        std::shared_ptr<std::wstring> m_str;
         size_t                        m_pos;
         size_t                        m_endpos;
         std::vector<size_t>           m_groups;
@@ -418,37 +349,13 @@ class re {
         REFLAGS                           flags();
         std::wstring                      pattern();
         std::shared_ptr<re::MatchObjectW> search(const std::wstring & Str, size_t pos = 0, int endpos = -1);
-#if !defined(PCRE2PLUS_NODELETE)
-        std::shared_ptr<re::MatchObjectW> search(const std::wstring && Str, size_t pos = 0, int endpos = -1) = delete;
-#endif
         std::vector<std::wstring> split(const std::wstring & Str, size_t maxsplit = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        std::vector<std::wstring> split(const std::wstring && Str, size_t maxsplit = 0) = delete;
-#endif
         std::vector<std::wstring> findall(const std::wstring & Str, size_t pos = 0, int endpos = -1);
-#if !defined(PCRE2PLUS_NODELETE)
-        std::vector<std::wstring> findall(const std::wstring && Str, size_t pos = 0, int endpos = -1) = delete;
-#endif
         InputIteratorW finditer(const std::wstring & Str, size_t pos = 0, int endpos = -1);
-#if !defined(PCRE2PLUS_NODELETE)
-        InputIteratorW finditer(const std::wstring && Str, size_t pos = 0, int endpos = -1) = delete;
-#endif
         std::wstring sub(const std::wstring & repl, const std::wstring & Str, size_t count = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        //std::wstring sub(const std::wstring & repl, const std::wstring && Str, size_t count = 0) = delete;
-#endif
         std::wstring sub(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        //std::wstring sub(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0) = delete;
-#endif
         std::tuple<std::wstring, size_t> subn(const std::wstring & repl, const std::wstring & Str, size_t count = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        //std::tuple<std::wstring, size_t> subn(const std::wstring & repl, const std::wstring && Str, size_t count = 0) = delete;
-#endif
         std::tuple<std::wstring, size_t> subn(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count = 0);
-#if !defined(PCRE2PLUS_NODELETE)
-        //std::tuple<std::wstring, size_t> subn(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring && Str, size_t count = 0) = delete;
-#endif
     };
     //==========================================================================
     class iterW {

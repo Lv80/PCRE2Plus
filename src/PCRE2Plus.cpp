@@ -588,21 +588,21 @@ re::InputIteratorW re::finditer(const std::wstring & pattern, const std::wstring
 }
 //==============================================================================
 //------------------------------------------------------------------------------
-re::MatchObject::MatchObject(std::shared_ptr<RegexObject> re, const std::string & Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos) : m_re(re),
-                                                                                                                                                            m_str(Str),
-                                                                                                                                                            m_pos(pos),
-                                                                                                                                                            m_endpos(endpos),
-                                                                                                                                                            m_lastindex(lastindex) {
+re::MatchObject::MatchObject(std::shared_ptr<RegexObject> re, std::shared_ptr<std::string> Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos) : m_re(re),
+                                                                                                                                                                     m_str(Str),
+                                                                                                                                                                     m_pos(pos),
+                                                                                                                                                                     m_endpos(endpos),
+                                                                                                                                                                     m_lastindex(lastindex) {
     for (size_t i = 0; i < lastindex * 2; i++) {
         this->m_groups.push_back(ovector[i]);
     }
 }
 //------------------------------------------------------------------------------
-re::MatchObjectW::MatchObjectW(std::shared_ptr<RegexObjectW> re, const std::wstring & Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos) : m_re(re),
-                                                                                                                                                                m_str(Str),
-                                                                                                                                                                m_pos(pos),
-                                                                                                                                                                m_endpos(endpos),
-                                                                                                                                                                m_lastindex(lastindex) {
+re::MatchObjectW::MatchObjectW(std::shared_ptr<RegexObjectW> re, std::shared_ptr<std::wstring> Str, PCRE2_SIZE * ovector, size_t lastindex, size_t pos, size_t endpos) : m_re(re),
+                                                                                                                                                                         m_str(Str),
+                                                                                                                                                                         m_pos(pos),
+                                                                                                                                                                         m_endpos(endpos),
+                                                                                                                                                                         m_lastindex(lastindex) {
     for (size_t i = 0; i < lastindex * 2; i++) {
         this->m_groups.push_back(ovector[i]);
     }
@@ -644,7 +644,7 @@ std::string re::MatchObject::group(size_t i) {
     if (i > m_lastindex) {
         return "";
     }
-    return this->m_str.substr(
+    return this->m_str.get()->substr(
         this->m_groups[2 * i],
         this->m_groups[2 * i + 1] - this->m_groups[2 * i]);
 }
@@ -653,7 +653,7 @@ std::wstring re::MatchObjectW::group(size_t i) {
     if (i > m_lastindex) {
         return L"";
     }
-    return this->m_str.substr(
+    return this->m_str.get()->substr(
         this->m_groups[2 * i],
         this->m_groups[2 * i + 1] - this->m_groups[2 * i]);
 }
@@ -732,12 +732,12 @@ std::shared_ptr<re::RegexObjectW> re::MatchObjectW::re() {
     return m_re;
 }
 //------------------------------------------------------------------------------
-std::string re::MatchObject::string() {
-    return m_str;
+const std::string & re::MatchObject::string() {
+    return *(m_str.get());
 }
 //------------------------------------------------------------------------------
-std::wstring re::MatchObjectW::string() {
-    return m_str;
+const std::wstring & re::MatchObjectW::string() {
+    return *m_str.get();
 }
 //==============================================================================
 re::RegexObject::RegexObject(pcre2_code_8 * re, REFLAGS flags, std::string pattern) : m_flags(flags),
@@ -1264,7 +1264,7 @@ std::shared_ptr<re::MatchObject> re::RegexObject::search(const std::string & Str
         NULL);
     if (lastindex > 0) {
         PCRE2_SIZE *                 ovector = pcre2_get_ovector_pointer_8(m_match_data);
-        std::shared_ptr<MatchObject> p_sm(new MatchObject(shared_from_this(), Str, ovector, lastindex, pos, endpos));
+        std::shared_ptr<MatchObject> p_sm(new MatchObject(shared_from_this(), std::make_shared<std::string>(Str), ovector, lastindex, pos, endpos));
         return p_sm;
     }
     else {
@@ -1296,7 +1296,7 @@ std::shared_ptr<re::MatchObjectW> re::RegexObjectW::search(const std::wstring & 
         NULL);
     if (lastindex > 0) {
         PCRE2_SIZE *                  ovector = pcre2_get_ovector_pointer(m_match_data);
-        std::shared_ptr<MatchObjectW> p_sm(new MatchObjectW(shared_from_this(), Str, ovector, lastindex, pos, endpos));
+        std::shared_ptr<MatchObjectW> p_sm(new MatchObjectW(shared_from_this(), std::make_shared<std::wstring>(Str), ovector, lastindex, pos, endpos));
         return p_sm;
     }
     else {

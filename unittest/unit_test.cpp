@@ -37,7 +37,7 @@ using namespace PCRE2Plus;
 TEST(pcre2plus, basic_matching) {
     std::string str = "HelloWorld";
     auto        R   = re::compile(R"(\w+)");
-    auto        M   = R->search(str);
+    auto        M   = R->search(str.c_str());
     ASSERT_TRUE(R != nullptr);
     EXPECT_TRUE(re::getlasterror() == 100);
     ASSERT_TRUE(M != nullptr);
@@ -46,8 +46,7 @@ TEST(pcre2plus, basic_matching) {
 //------------------------------------------------------------------------------
 TEST(pcre2plus, multiple_matching) {
     std::string pattern = R"((\w+ )+)";
-    std::string str     = R"(abc def ghi )";
-    auto        M       = re::search(pattern, str);
+    auto        M = re::search(pattern, "abc def ghi ");
     ASSERT_TRUE(M != nullptr);
     EXPECT_EQ(re::getlasterror(), 100);
     //The below result is correct, duplicated groups are flushed
@@ -178,7 +177,7 @@ TEST(pcre2plus, re_back_reference) {
 //------------------------------------------------------------------------------
 TEST(pcre2plus, re_subn_fun) {
     std::string str("ABC def ggg");
-    auto out = re::subn(R"(\w)", [=](const re::M_PT M) { return M->group().append("X1"); }, str);
+    auto out = re::subn(R"(\w)", [=](const re::M_PT M) { auto x = M->group(); return x.append("X1"); }, str);
     EXPECT_EQ(re::getlasterror(), 100);
     EXPECT_EQ(9, std::get<1>(out));
     EXPECT_EQ("AX1BX1CX1 dX1eX1fX1 gX1gX1gX1", std::get<0>(out));
@@ -289,7 +288,7 @@ TEST(pcre2plus, re_uniocde_inidcation) {
 //------------------------------------------------------------------------------
 TEST(pcre2plus, re_Unicode) {
     std::wstring str = L"äbc";
-    auto         M = re::search(LR"(\p{L}+)", str);
+    auto         M = re::search(LR"(\p{L}+)", str.c_str());
     ASSERT_TRUE(M !=nullptr);
     EXPECT_EQ(re::getlasterror(), 100);
     EXPECT_EQ(L"äbc", M->group());
