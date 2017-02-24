@@ -928,7 +928,11 @@ std::tuple<std::string, size_t> re::RegexObject::subn(std::function<std::string(
     std::string Str1(Str);
     int         Offset = 0;
     size_t      Count  = 0;
+    size_t      i = 0;
     for (auto it = this->finditer(Str); *it; ++it) {
+        if (count != 0 && ++i > count) {
+            break;
+        }
         Count++;
         auto        S = it->m_groups[0];
         auto        E = it->m_groups[1];
@@ -943,7 +947,11 @@ std::tuple<std::wstring, size_t> re::RegexObjectW::subn(std::function<std::wstri
     std::wstring Str1(Str);
     int          Offset = 0;
     size_t       Count  = 0;
+    size_t      i = 0;
     for (auto it = this->finditer(Str); *it; ++it) {
+        if (count != 0 && ++i > count) {
+            break;
+        }
         Count++;
         auto         S = it->m_groups[0];
         auto         E = it->m_groups[1];
@@ -1148,10 +1156,13 @@ std::string re::RegexObject::sub(const std::string & repl, const std::string & S
 }
 //------------------------------------------------------------------------------
 std::string re::RegexObject::sub(std::function<std::string(const std::shared_ptr<re::MatchObject> &)> userfun, const std::string & Str, size_t count) {
-    //FIXME: count not used
     std::string Str1(Str);
     int         Offset = 0;
+    size_t      i      = 0;
     for (auto it = this->finditer(Str); *it; ++it) {
+        if (count != 0 && ++i > count) {
+            break;
+        }
         auto        S = it->m_groups[0];
         auto        E = it->m_groups[1];
         std::string r = userfun(*it);
@@ -1227,10 +1238,13 @@ std::wstring re::RegexObjectW::sub(const std::wstring & repl, const std::wstring
 }
 //------------------------------------------------------------------------------
 std::wstring re::RegexObjectW::sub(std::function<std::wstring(const std::shared_ptr<re::MatchObjectW> &)> userfun, const std::wstring & Str, size_t count) {
-    //FIXME: count not used
     std::wstring Str1(Str);
+    size_t       i      = 0;
     int          Offset = 0;
     for (auto it = this->finditer(Str); *it; ++it) {
+        if (count != 0 && ++i > count) {
+            break;
+        }
         auto         S = it->m_groups[0];
         auto         E = it->m_groups[1];
         std::wstring r = userfun(*it);
@@ -1385,8 +1399,8 @@ re::iter::iter(std::shared_ptr<re::RegexObject> regexobj, const std::string & St
                                                                                                  m_endpos(endpos) {
     m_matchobj = m_regexobj->search(m_str, 0, endpos);
     if (m_matchobj) {
-        if (m_pos == (int) m_matchobj->end(0)) {
-            m_pos++;
+        if (m_matchobj->end(0) == m_matchobj->start(0)) {
+            m_pos = (int) m_matchobj->end(0) + 1;
         }
         else {
             m_pos = (int) m_matchobj->end(0);
@@ -1399,8 +1413,8 @@ re::iterW::iterW(std::shared_ptr<re::RegexObjectW> regexobj, const std::wstring 
                                                                                                      m_endpos(endpos) {
     m_matchobj = m_regexobj->search(m_str, 0);
     if (m_matchobj) {
-        if (m_pos == (int) m_matchobj->end(0)) {
-            m_pos++;
+        if (m_matchobj->end(0) == m_matchobj->start(0)) {
+            m_pos = (int) m_matchobj->end(0) + 1;
         }
         else {
             m_pos = (int) m_matchobj->end(0);
